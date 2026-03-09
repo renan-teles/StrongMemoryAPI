@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Node (caso tenha frontend)
+node_modules
+
+# IDEs
+.vscode
+.idea
+*.iml
+
+# Logs
+*.log
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Documentação
+README.md
+docs/
+
+# Testes
+src/test
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+
+# Maven / Gradle cache
+.mvn/wrapper/maven-wrapper.jar
+.gradle
+
+# Build antigo
+target/*
+!target/*.jar
