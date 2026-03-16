@@ -65,7 +65,7 @@ public abstract class UserService {
         }
 
         String token = jwtUtil.generateToken(user);
-        return new AuthResponse(user.getId(), token);
+        return new AuthResponse(user.getId(), token, user.getRole().getRole());
     }
 
     protected final UserEntity register(UserRequest request, UserRoles enumRole){
