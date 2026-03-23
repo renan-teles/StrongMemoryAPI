@@ -91,7 +91,7 @@ public class WordSuggestionService {
 
     public void delete(Long id){
         if(!suggestionRepository.existsById(id)){
-            throw new ResourceNotFoundException("Sugestão não encontrada.");
+            throw new ResourceNotFoundException("Sugestão de palavra não encontrada.");
         }
         suggestionRepository.deleteById(id);
     }

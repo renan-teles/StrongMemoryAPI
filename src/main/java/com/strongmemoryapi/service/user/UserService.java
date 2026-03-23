@@ -9,6 +9,7 @@ import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import com.strongmemoryapi.exception.local.InvalidCredentialsException;
+import com.strongmemoryapi.exception.local.InvalidCurrentPasswordException;
 import com.strongmemoryapi.exception.local.ResourceAlreadyExistsException;
 import com.strongmemoryapi.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.repository.user.UserRepository;
@@ -47,7 +48,7 @@ public abstract class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if(!encoder.matches(request.currentPassword(), user.getPassword())){
-            throw new InvalidCredentialsException("Senha atual incorreta.");
+            throw new InvalidCurrentPasswordException();
         }
 
         user.setPassword(encoder.encode(request.newPassword()));

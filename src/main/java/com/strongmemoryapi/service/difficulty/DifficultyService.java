@@ -43,8 +43,11 @@ public class DifficultyService {
     private DifficultyResponse parseToDifficultyResponse(DifficultyEntity difficulty){
         return new DifficultyResponse(
                 difficulty.getId(),
-                difficulty.getDifficulty()
+                difficulty.getDifficulty(),
+                difficulty.getTranslation(),
+                difficulty.getMaxQuantityWords(),
+                difficulty.getIncreaseDisplayTimeSeconds(),
+                difficulty.getIncreaseTypingTimeSeconds()
         );
     }
-
 }

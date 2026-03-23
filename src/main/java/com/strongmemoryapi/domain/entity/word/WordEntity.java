@@ -37,5 +37,4 @@ public class WordEntity {
     public void setWord(String word) {
         this.word = word;
     }
-
 }
