@@ -35,7 +35,7 @@ public class ScoreRecordService {
     public void registerInitialUserScores(UserEntity user){
         if(!user.getRole().getRole().equalsIgnoreCase(UserRoles.ROLE_PLAYER.toString())){
             throw new IllegalArgumentException(
-                    "Tipo de usuário inválido para cadastro de pontuações iniciais."
+                    "Papel de usuário inválido para cadastro de pontuações iniciais."
             );
         }
         if(!this.userRepository.existsById(user.getId())){

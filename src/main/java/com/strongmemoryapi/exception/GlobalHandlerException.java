@@ -1,9 +1,6 @@
 package com.strongmemoryapi.exception;
 
-import com.strongmemoryapi.exception.local.InsufficientWordsException;
-import com.strongmemoryapi.exception.local.InvalidCredentialsException;
-import com.strongmemoryapi.exception.local.ResourceAlreadyExistsException;
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
+import com.strongmemoryapi.exception.local.*;
 import com.strongmemoryapi.dto.response.ApiResponse;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -76,6 +73,12 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ApiResponse<>(400, "Parâmetro inválido.");
+    }
+
+    @ExceptionHandler(InvalidCurrentPasswordException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ApiResponse<Void> handlerInvalidCurrentPasswordException(InvalidCurrentPasswordException ex){
+        return new ApiResponse<>(400, ex.getMessage());
     }
 
 }

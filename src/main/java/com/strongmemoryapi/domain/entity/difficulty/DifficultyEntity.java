@@ -19,16 +19,64 @@ public class DifficultyEntity {
     @Column(unique = true, nullable = false)
     private String difficulty;
 
+    @Column(unique = true, nullable = false)
+    private String translation;
+
+    @Column(nullable = false, name = "max_quantity_words")
+    private Byte maxQuantityWords;
+
+    @Column(nullable = false, name = "increase_display_time_seconds")
+    private Byte increaseDisplayTimeSeconds;
+
+    @Column(nullable = false, name = "increase_typing_time_seconds")
+    private Byte increaseTypingTimeSeconds;
+
     public Byte getId() {
         return id;
+    }
+
+    public List<WordEntity> getWords() {
+        return words;
     }
 
     public String getDifficulty() {
         return difficulty;
     }
 
-    public List<WordEntity> getWords() {
-        return words;
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public String getTranslation() {
+        return translation;
+    }
+
+    public void setTranslation(String translation) {
+        this.translation = translation;
+    }
+
+    public Byte getMaxQuantityWords() {
+        return maxQuantityWords;
+    }
+
+    public void setMaxQuantityWords(Byte maxQuantityWords) {
+        this.maxQuantityWords = maxQuantityWords;
+    }
+
+    public Byte getIncreaseDisplayTimeSeconds() {
+        return increaseDisplayTimeSeconds;
+    }
+
+    public void setIncreaseDisplayTimeSeconds(Byte increaseDisplayTimeSeconds) {
+        this.increaseDisplayTimeSeconds = increaseDisplayTimeSeconds;
+    }
+
+    public Byte getIncreaseTypingTimeSeconds() {
+        return increaseTypingTimeSeconds;
+    }
+
+    public void setIncreaseTypingTimeSeconds(Byte increaseTypingTimeSeconds) {
+        this.increaseTypingTimeSeconds = increaseTypingTimeSeconds;
     }
 
 }

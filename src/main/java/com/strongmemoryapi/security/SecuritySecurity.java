@@ -1,6 +1,7 @@
 package com.strongmemoryapi.security;
 
 import com.strongmemoryapi.security.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,7 +74,15 @@ public class SecuritySecurity {
 
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                     .authenticationEntryPoint((request, response, authException) -> {
+                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                     })
+                     .accessDeniedHandler((request, response, accessDeniedException) -> {
+                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    })
+                );
 
         return http.build();
     }

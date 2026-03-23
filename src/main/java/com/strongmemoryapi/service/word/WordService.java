@@ -113,9 +113,6 @@ public class WordService {
     @Cacheable(value = "wordIdsByDifficulty", key = "#difficultyId")
     public List<Long> findIdsByDifficulty(DifficultyEntity difficulty) {
         Byte difficultyId = difficulty.getId();
-
-        System.out.println("Buscando IDs no banco para dificuldade: " + difficulty.getDifficulty());
-
         return wordRepository.findIdsByDifficulty(difficulty);
     }
 
