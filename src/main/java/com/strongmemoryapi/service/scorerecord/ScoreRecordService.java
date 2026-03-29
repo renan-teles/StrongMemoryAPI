@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScoreRecordService {
@@ -63,8 +64,8 @@ public class ScoreRecordService {
         scoreRepository.saveAll(scores);
     }
 
-    public List<ScoreRecordResponse> getScoreRecords(Long userId){
-        if(!this.userRepository.existsById(userId)){
+    public List<ScoreRecordResponse> getUserScoreRecords(Long userId){
+        if(!userRepository.existsById(userId)){
             throw new ResourceNotFoundException("Jogador não encontrado.");
         }
 
@@ -75,11 +76,24 @@ public class ScoreRecordService {
                 .toList();
     }
 
+    public ScoreRecordResponse getUserScoreRecord(Long userId, String difficultyName){
+        if(!userRepository.existsById(userId)){
+            throw new ResourceNotFoundException("Jogador não encontrado.");
+        }
+
+        DifficultyEntity difficulty = difficultyService.getByDifficultyName(difficultyName);
+
+        ScoreRecordEntity score = scoreRepository.findByUserIdAndDifficulty(userId, difficulty)
+                .orElseThrow(() -> new ResourceNotFoundException("Pontuação não encontrada."));
+
+        return parseToScoreRecordResponse(score);
+    }
+
     public void updateScoreRecord(Long id, ScoreRecordRequest request){
         ScoreRecordEntity score = scoreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pontuação não encontrada."));
 
-        if(request.newScore() < score.getScore()){
+        if(request.newScore() <= score.getScore()){
             throw new IllegalArgumentException("Nova pontuação inválida.");
         }
 

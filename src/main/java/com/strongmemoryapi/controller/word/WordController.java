@@ -39,7 +39,7 @@ public class WordController {
         service.delete(id);
     }
 
-    @GetMapping("get-random-words")
+    @GetMapping("/get-random-words")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<WordResponse>> getRandomWords(
             @RequestParam String difficulty,
@@ -49,13 +49,13 @@ public class WordController {
         return new ApiResponse<>(200, "Palavras sorteadas com sucesso.", res);
     }
 
-    @GetMapping("get-all-by-difficulty")
+    @GetMapping("/get-all-by-difficulty")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Page<WordResponse>> getAllByDifficulty(
             @RequestParam(defaultValue = "easy") String difficulty,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "id", name = "sort_by") String sortBy
+            @RequestParam(defaultValue = "word") String sortBy
     ){
         Page<WordResponse> res = service.getAllByDifficulty(difficulty, page, size, sortBy);
         return new ApiResponse<>(200, "Palavras buscadas com sucesso.", res);

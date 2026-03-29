@@ -119,7 +119,8 @@ public class WordService {
     private WordResponse parseToWordResponse(WordEntity word){
         return new WordResponse(
                 word.getId(),
-                word.getWord()
+                word.getWord(),
+                word.getDifficulty().getDifficulty()
         );
     }
 
