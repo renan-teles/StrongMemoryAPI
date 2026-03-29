@@ -18,17 +18,27 @@ public class ScoreRecordController {
     @Autowired
     private ScoreRecordService service;
 
-    @GetMapping("get-all-by-user-id/{userId}")
+    @GetMapping("/get-all-by-user-id/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<ScoreRecordResponse>> getAllByUserId(
         @PathVariable Long userId
     ){
-        List<ScoreRecordResponse> res = service.getScoreRecords(userId);
+        List<ScoreRecordResponse> res = service.getUserScoreRecords(userId);
         return new ApiResponse<>(200, "Pontuações buscadas com sucesso.", res);
     }
 
+    @GetMapping("/get-by-user-id-and-difficulty")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<ScoreRecordResponse> getAllByUserIdAndDifficulty(
+            @RequestParam(required = true) String difficulty,
+            @RequestParam(required = true) Long userId
+    ){
+        ScoreRecordResponse res = service.getUserScoreRecord(userId, difficulty);
+        return new ApiResponse<>(200, "Pontuação buscada com sucesso.", res);
+    }
+
     @PutMapping("/update-score/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updatePassword(
             @PathVariable Long id,
             @Valid @RequestBody ScoreRecordRequest request

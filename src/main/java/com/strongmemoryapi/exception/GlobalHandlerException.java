@@ -24,7 +24,7 @@ public class GlobalHandlerException {
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .toList();
 
-        return new ApiResponse<>(400, "Falha de validação.", validationErrors);
+        return new ApiResponse<>(400, "Dados inválidos.", validationErrors);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

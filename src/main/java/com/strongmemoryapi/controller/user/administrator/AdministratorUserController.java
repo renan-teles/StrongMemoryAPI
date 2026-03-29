@@ -23,7 +23,7 @@ public class AdministratorUserController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public ApiResponse<UserResponse> register (@Valid @RequestBody UserRequest request){
         UserResponse res = service.register(request);
-        return new ApiResponse<>(201, "Administrador criado com sucesso.", res);
+        return new ApiResponse<>(201, "Administrador cadastrado com sucesso.", res);
     }
 
     @PutMapping("/update-password/{id}")
@@ -39,7 +39,7 @@ public class AdministratorUserController {
     @ResponseStatus(value = HttpStatus.OK)
     public ApiResponse<AuthResponse> auth(@Valid @RequestBody AuthRequest request){
         AuthResponse res = service.auth(request);
-        return new ApiResponse<>(200, "Autenticação realizada com sucesso.", res);
+        return new ApiResponse<>(200, "Autenticação de administrador realizada com sucesso.", res);
     }
 
 }
