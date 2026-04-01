@@ -77,6 +77,10 @@ public class WordSuggestionService {
             throw new ResourceAlreadyExistsException("Palavra sugerida já cadastrada.");
         }
 
+        if(suggestionRepository.existsBysuggestedWord(request.suggestedWord())){
+            throw new ResourceAlreadyExistsException("Palavra já sugerida.");
+        }
+
         if(!difficultyRepository.existsByDifficulty(request.suggestedDifficulty())){
             throw new ResourceNotFoundException("Difficuldade não encontrada.");
         }

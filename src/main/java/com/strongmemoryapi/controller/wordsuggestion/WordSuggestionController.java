@@ -21,7 +21,7 @@ public class WordSuggestionController {
 
     @GetMapping("/get-all")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<WordSuggestionResponse>> getAllByDifficulty(
+    public ApiResponse<Page<WordSuggestionResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "suggestedWord") String sortBy
@@ -30,7 +30,7 @@ public class WordSuggestionController {
         return new ApiResponse<>(200, "Sugestões de palavras buscadas com sucesso.", res);
     }
 
-    @GetMapping("/get-all-by-period")
+    @GetMapping("/get-by-period")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Page<WordSuggestionResponse>> getAllByPeriod(
             @RequestParam(required = true) LocalDate startDate,

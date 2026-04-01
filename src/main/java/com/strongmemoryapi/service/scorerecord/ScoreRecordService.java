@@ -89,7 +89,7 @@ public class ScoreRecordService {
         return parseToScoreRecordResponse(score);
     }
 
-    public void updateScoreRecord(Long id, ScoreRecordRequest request){
+    public ScoreRecordResponse updateScoreRecord(Long id, ScoreRecordRequest request){
         ScoreRecordEntity score = scoreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pontuação não encontrada."));
 
@@ -98,7 +98,8 @@ public class ScoreRecordService {
         }
 
         score.setScore(request.newScore());
-        scoreRepository.save(score);
+
+        return parseToScoreRecordResponse(scoreRepository.save(score));
     }
 
     private ScoreRecordResponse parseToScoreRecordResponse(ScoreRecordEntity score){
