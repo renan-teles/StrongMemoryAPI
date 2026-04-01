@@ -23,7 +23,7 @@ public class DifficultyController {
         return new ApiResponse<>(200, "Dificuldades buscadas com sucesso.", difficults);
     }
 
-    @GetMapping("/get-by-id/{id}")
+    @GetMapping("/get/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public ApiResponse<DifficultyResponse> getById(@PathVariable Byte id){
         DifficultyResponse difficulty = service.getById(id);

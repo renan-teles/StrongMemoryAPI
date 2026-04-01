@@ -26,6 +26,8 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
 
     Optional<Byte> findDifficultyIdById(Long id);
 
+    List<Long> findIdsByDifficultyId(Byte difficultyId);
+
     /*
     @Query(value = """
                 SELECT w.id, w.word FROM words w

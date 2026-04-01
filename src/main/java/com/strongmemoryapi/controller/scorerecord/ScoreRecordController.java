@@ -18,18 +18,18 @@ public class ScoreRecordController {
     @Autowired
     private ScoreRecordService service;
 
-    @GetMapping("/get-all-by-user-id/{userId}")
+    @GetMapping("/get-user-scores")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<ScoreRecordResponse>> getAllByUserId(
-        @PathVariable Long userId
+    public ApiResponse<List<ScoreRecordResponse>> getUserScores(
+        @RequestParam(required = true) Long userId
     ){
         List<ScoreRecordResponse> res = service.getUserScoreRecords(userId);
         return new ApiResponse<>(200, "Pontuações buscadas com sucesso.", res);
     }
 
-    @GetMapping("/get-by-user-id-and-difficulty")
+    @GetMapping("/get-user-score")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<ScoreRecordResponse> getAllByUserIdAndDifficulty(
+    public ApiResponse<ScoreRecordResponse> getUserScore(
             @RequestParam(required = true) String difficulty,
             @RequestParam(required = true) Long userId
     ){
@@ -37,13 +37,14 @@ public class ScoreRecordController {
         return new ApiResponse<>(200, "Pontuação buscada com sucesso.", res);
     }
 
-    @PutMapping("/update-score/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void updatePassword(
+    @PutMapping("/update/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ApiResponse<ScoreRecordResponse> updatePassword(
             @PathVariable Long id,
             @Valid @RequestBody ScoreRecordRequest request
     ){
-        service.updateScoreRecord(id, request);
+        ScoreRecordResponse res =  service.updateScoreRecord(id, request);
+        return new ApiResponse<>(200, "Pontuação atualizada com sucesso.", res);
     }
 
 }
