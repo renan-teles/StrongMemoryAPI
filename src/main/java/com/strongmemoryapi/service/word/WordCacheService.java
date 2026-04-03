@@ -14,7 +14,7 @@ public class WordCacheService {
     @Autowired
     private WordRepository wordRepository;
 
-    @Cacheable(value = "wordIdsByDifficulty", key = "#difficulty.getId()")
+    //@Cacheable(value = "wordIdsByDifficulty", key = "#difficulty != null ? #difficulty.id : 0")
     public List<Long> findIdsByDifficulty(DifficultyEntity difficulty) {
         return wordRepository.findIdsByDifficulty(difficulty);
     }

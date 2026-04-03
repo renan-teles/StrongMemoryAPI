@@ -10,9 +10,10 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.time.Duration;
 
-@Configuration
+//@Configuration
 public class RedisConfig {
 
+    /*
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
@@ -29,5 +30,6 @@ public class RedisConfig {
                 .cacheDefaults(config)
                 .build();
     }
+     */
 
 }

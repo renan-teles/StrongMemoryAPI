@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecuritySecurity {
+public class AuthSecurity {
 
     @Autowired
     private JwtAuthenticationFilter filter;
@@ -47,7 +47,7 @@ public class SecuritySecurity {
                         // Authenticated
                         .requestMatchers(
                                 "/api/difficulty/**",
-                                "/api/word/get-all-by-difficulty"
+                                "/api/word/get-by-difficulty"
                         )
                         .hasAnyRole("PLAYER", "ADMINISTRATOR")
 
@@ -55,7 +55,7 @@ public class SecuritySecurity {
                         .requestMatchers(
                                 "/api/score-record/**",
                                 "/api/player/update-password/**",
-                                "/api/word/get-random-words",
+                                "/api/word/get-random-list",
                                 "/api/word-suggestion/register"
                         )
                         .hasRole("PLAYER")
@@ -67,7 +67,7 @@ public class SecuritySecurity {
                                 "/api/word/delete/**",
                                 "/api/word/update/**",
                                 "/api/word-suggestion/get-all",
-                                "/api/word-suggestion/get-all-by-period",
+                                "/api/word-suggestion/get-by-period",
                                 "/api/word-suggestion/delete/**"
                         )
                         .hasRole("ADMINISTRATOR")

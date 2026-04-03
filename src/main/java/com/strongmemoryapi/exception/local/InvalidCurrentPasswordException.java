@@ -6,6 +6,6 @@ public class InvalidCurrentPasswordException extends RuntimeException {
     }
 
     public InvalidCurrentPasswordException() {
-        super("Senha inválida");
+        super("Senha atual inválida ou incorreta.");
     }
 }

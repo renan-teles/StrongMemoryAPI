@@ -12,7 +12,6 @@ import com.strongmemoryapi.repository.word.WordRepository;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +34,7 @@ public class WordService {
     @Autowired
     private WordCacheService cacheService;
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public WordResponse register(WordRegistrationRequest request){
         if(wordRepository.existsByWord(request.word())){
             throw new ResourceAlreadyExistsException("Palavra já cadastrada.");
@@ -49,7 +48,7 @@ public class WordService {
         return this.parseToWordResponse(wordRepository.save(word));
     }
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public void update(Long id, WordUpdateRequest request){
         WordEntity word = wordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Palavra não encontrada."));
@@ -58,9 +57,9 @@ public class WordService {
         wordRepository.save(word);
     }
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public void delete(Long id){
-        if(wordRepository.existsById(id)){
+        if(!wordRepository.existsById(id)){
            throw new ResourceNotFoundException("Palavra não encontrada.");
         }
         wordRepository.deleteById(id);
