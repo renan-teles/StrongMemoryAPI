@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/administrator")
+@RequestMapping(value = "api/administrator", produces = "application/json;charset=UTF-8")
 public class AdministratorUserController {
 
     @Autowired

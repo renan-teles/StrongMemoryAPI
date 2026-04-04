@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/player")
+@RequestMapping(value = "api/player", produces = "application/json;charset=UTF-8")
 public class PlayerUserController {
 
     @Autowired
