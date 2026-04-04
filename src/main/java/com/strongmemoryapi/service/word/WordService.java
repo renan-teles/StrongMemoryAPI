@@ -42,7 +42,7 @@ public class WordService {
 
         DifficultyEntity difficulty = difficultyService.getByDifficultyName(request.difficulty());
         WordEntity word = new WordEntity();
-        word.setWord(request.word());
+        word.setWord(request.word().toLowerCase());
         word.setDifficulty(difficulty);
 
         return this.parseToWordResponse(wordRepository.save(word));
@@ -53,7 +53,7 @@ public class WordService {
         WordEntity word = wordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Palavra não encontrada."));
 
-        word.setWord(request.word());
+        word.setWord(request.word().toLowerCase());
         wordRepository.save(word);
     }
 

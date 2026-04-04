@@ -87,8 +87,8 @@ public class WordSuggestionService {
 
         WordSuggestionEntity suggestion = new WordSuggestionEntity();
         suggestion.setUser(user);
-        suggestion.setSuggestedWord(request.suggestedWord());
-        suggestion.setSuggestedDifficulty(request.suggestedDifficulty());
+        suggestion.setSuggestedWord(request.suggestedWord().toLowerCase());
+        suggestion.setSuggestedDifficulty(request.suggestedDifficulty().toLowerCase());
 
         return partoToWordSuggestionResponse(suggestionRepository.save(suggestion));
     }

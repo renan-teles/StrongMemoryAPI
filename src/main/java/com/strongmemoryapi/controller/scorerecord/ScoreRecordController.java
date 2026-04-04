@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/score-record")
+@RequestMapping(value = "/api/score-record", produces = "application/json;charset=UTF-8")
 public class ScoreRecordController {
 
     @Autowired
