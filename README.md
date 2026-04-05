@@ -1,4 +1,4 @@
-# 🧠 Strong Memory API
+# 🧠 StrongMemoryAPI
 
 API REST desenvolvida com Java e Spring Boot para suporte à aplicação **Strong Memory (SM)**, uma plataforma web gamificada voltada para o treinamento da memória muscular e cognitiva.
 
