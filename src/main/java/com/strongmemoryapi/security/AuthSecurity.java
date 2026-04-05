@@ -40,7 +40,8 @@ public class AuthSecurity {
                                 "/api/player/auth",
                                 "/api/player/register",
                                 "/api/administrator/auth",
-                                "/api/administrator/register"
+                                "/api/administrator/register",
+                                "/actuator/health"
                         )
                         .permitAll()
 
