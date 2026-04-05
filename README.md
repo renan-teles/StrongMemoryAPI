@@ -226,6 +226,18 @@ SPRING_REDIS_PORT=
 
 <br/>
 
+## 🐳 Executar o Projeto Completo
+
+Este repositório representa apenas uma parte do sistema Strong Memory.
+
+Para executar toda a aplicação integrada (frontend + backend + banco de dados), utilize o ambiente completo com Docker:
+
+👉 https://github.com/renan-teles/strong-memory-docker
+
+Isso permite rodar o sistema completo com um único comando.
+
+<br/>
+
 ## 📌 Observações
 
 Este projeto foi desenvolvido com foco em:
