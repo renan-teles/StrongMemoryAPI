@@ -20,7 +20,7 @@ public class ScoreRecordController {
 
     @GetMapping("/get-user-scores")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<ScoreRecordResponse>> getUserScores(
+    ApiResponse<List<ScoreRecordResponse>> getUserScores(
         @RequestParam(required = true) Long userId
     ){
         List<ScoreRecordResponse> res = service.getUserScoreRecords(userId);
@@ -29,7 +29,7 @@ public class ScoreRecordController {
 
     @GetMapping("/get-user-score")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<ScoreRecordResponse> getUserScore(
+    ApiResponse<ScoreRecordResponse> getUserScore(
             @RequestParam(required = true) String difficulty,
             @RequestParam(required = true) Long userId
     ){
@@ -39,7 +39,7 @@ public class ScoreRecordController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public ApiResponse<ScoreRecordResponse> updatePassword(
+    ApiResponse<ScoreRecordResponse> updatePassword(
             @PathVariable Long id,
             @Valid @RequestBody ScoreRecordRequest request
     ){

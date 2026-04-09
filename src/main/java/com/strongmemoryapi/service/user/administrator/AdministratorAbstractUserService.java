@@ -1,17 +1,17 @@
 package com.strongmemoryapi.service.user.administrator;
 
 import com.strongmemoryapi.domain.entity.user.UserEntity;
-import com.strongmemoryapi.domain.entity.user.role.UserRoles;
+import com.strongmemoryapi.enums.UserRoles;
 import com.strongmemoryapi.dto.request.user.AuthRequest;
 import com.strongmemoryapi.dto.request.user.UserPasswordUpdateRequest;
 import com.strongmemoryapi.dto.request.user.UserRequest;
 import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
-import com.strongmemoryapi.service.user.UserService;
+import com.strongmemoryapi.service.user.AbstractUserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdministratorUserService extends UserService {
+public class AdministratorAbstractUserService extends AbstractUserService {
 
     @Override
     public UserResponse register(UserRequest request) {

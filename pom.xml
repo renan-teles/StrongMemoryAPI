@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.strongmemoryapi</groupId>
 	<artifactId>StrongMemoryAPI</artifactId>
-	<version>1.0.10</version>
+	<version>1.0.11</version>
 	<name>StrongMemoryAPI</name>
 	<description>Strong Memory Api</description>
 	<url/>
@@ -114,21 +114,18 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		-->
 
 		<!-- REDIS -->
-		<!--
 		<dependency>
 		 	<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
-		-->
+
 	</dependencies>
 
 	<build>

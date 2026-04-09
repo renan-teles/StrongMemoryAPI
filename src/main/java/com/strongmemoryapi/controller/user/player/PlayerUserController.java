@@ -6,7 +6,7 @@ import com.strongmemoryapi.dto.request.user.UserRequest;
 import com.strongmemoryapi.dto.response.ApiResponse;
 import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
-import com.strongmemoryapi.service.user.player.PlayerUserService;
+import com.strongmemoryapi.service.user.player.PlayerAbstractUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,18 +17,18 @@ import org.springframework.web.bind.annotation.*;
 public class PlayerUserController {
 
     @Autowired
-    private PlayerUserService service;
+    private PlayerAbstractUserService service;
 
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ApiResponse<UserResponse> register (@Valid @RequestBody UserRequest request){
+    ApiResponse<UserResponse> register (@Valid @RequestBody UserRequest request){
         UserResponse res = service.register(request);
         return new ApiResponse<>(201, "Jogador cadastrado com sucesso.", res);
     }
 
     @PutMapping("/update-password/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void updatePassword(
+    void updatePassword(
             @PathVariable Long id,
             @Valid @RequestBody UserPasswordUpdateRequest request
     ){
@@ -37,7 +37,7 @@ public class PlayerUserController {
 
     @PostMapping("/auth")
     @ResponseStatus(value = HttpStatus.OK)
-    public ApiResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request){
+    ApiResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request){
         AuthResponse res = service.auth(request);
         return new ApiResponse<>(200, "Autenticação de jogador realizada com sucesso.", res);
     }
