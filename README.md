@@ -135,6 +135,7 @@ docker-compose up -d
 ```
 
 ---
+-->
 
 ## 🔐 Variáveis de Ambiente
 
@@ -149,8 +150,7 @@ SPRING_REDIS_HOST=
 SPRING_REDIS_PORT=
 ```
 
----
--->
+<br/>
 
 ## 📚 Principais Endpoints
 
@@ -245,8 +245,8 @@ Este projeto foi desenvolvido com foco em:
 * Prática de desenvolvimento backend profissional
 * Aplicação de boas práticas de arquitetura
 * Simulação de um sistema real com regras de negócio bem definidas
+
 <!--
 ---
-
 💡 *Projeto ideal para portfólio, demonstrando domínio em APIs REST, autenticação, arquitetura em camadas e integração com banco de dados e cache.*
 -->
