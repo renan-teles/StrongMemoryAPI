@@ -22,26 +22,26 @@ public class WordController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<WordResponse> register(@Valid @RequestBody WordRegistrationRequest request){
+    ApiResponse<WordResponse> register(@Valid @RequestBody WordRegistrationRequest request){
         WordResponse res = service.register(request);
         return new ApiResponse<>(201, "Palavra cadastrada com sucesso.", res);
     }
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Long id, @Valid @RequestBody WordUpdateRequest request){
+    void update(@PathVariable Long id, @Valid @RequestBody WordUpdateRequest request){
         service.update(id, request);
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
+    void delete(@PathVariable Long id){
         service.delete(id);
     }
 
     @GetMapping("/get-random-list")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<WordResponse>> getRandomWords(
+    ApiResponse<List<WordResponse>> getRandomWords(
             @RequestParam String difficulty,
             @RequestParam(name = "quantity") int wordsQuantity
     ){
@@ -51,7 +51,7 @@ public class WordController {
 
     @GetMapping("/get-by-difficulty")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<WordResponse>> getAllByDifficulty(
+    ApiResponse<Page<WordResponse>> getAllByDifficulty(
             @RequestParam(defaultValue = "easy") String difficulty,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,

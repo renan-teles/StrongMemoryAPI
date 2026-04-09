@@ -1,6 +1,5 @@
 package com.strongmemoryapi.service.scorerecord;
 
-import com.strongmemoryapi.domain.entity.user.role.UserRoles;
 import com.strongmemoryapi.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.dto.request.scorerecord.ScoreRecordRequest;
 import com.strongmemoryapi.dto.response.ScoreRecordResponse;
@@ -8,15 +7,14 @@ import com.strongmemoryapi.domain.entity.difficulty.DifficultyEntity;
 import com.strongmemoryapi.domain.entity.scorerecord.ScoreRecordEntity;
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import com.strongmemoryapi.repository.scorerecord.ScoreRecordRepository;
-import com.strongmemoryapi.repository.user.UserRepository;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
+import com.strongmemoryapi.service.user.UserService;
 import com.strongmemoryapi.service.user.role.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ScoreRecordService {
@@ -25,7 +23,7 @@ public class ScoreRecordService {
     private ScoreRecordRepository scoreRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private DifficultyService difficultyService;
@@ -34,17 +32,16 @@ public class ScoreRecordService {
     private UserRoleService roleService;
 
     public void registerInitialUserScores(UserEntity user){
-        if(!user.getRole().getRole().equalsIgnoreCase(UserRoles.ROLE_PLAYER.toString())){
+        if(!roleService.isPlayerRole(user.getRole())){
             throw new IllegalArgumentException(
                     "Papel de usuário inválido para cadastro de pontuações iniciais."
             );
         }
-        if(!this.userRepository.existsById(user.getId())){
-            throw new ResourceNotFoundException("Jogador não encontrado.");
-        }
 
-        List<DifficultyEntity> difficults =  difficultyService.getAllEntityObjects();
-        if(difficults.isEmpty()){
+        userService.checkExitsById(user.getId(), "Jogador não encontrado.");
+
+        List<DifficultyEntity> difficulties =  difficultyService.getAllEntityObjects();
+        if(difficulties.isEmpty()){
             throw new ResourceNotFoundException(
                     "Dificuldades não foram encontradas para registro e associação de pontuações iniciais."
             );
@@ -52,7 +49,7 @@ public class ScoreRecordService {
 
         List<ScoreRecordEntity> scores = new ArrayList<>();
 
-        for(DifficultyEntity difficulty : difficults){
+        for(DifficultyEntity difficulty : difficulties){
             ScoreRecordEntity score = new ScoreRecordEntity();
             score.setDifficulty(difficulty);
             score.setUser(user);
@@ -65,9 +62,7 @@ public class ScoreRecordService {
     }
 
     public List<ScoreRecordResponse> getUserScoreRecords(Long userId){
-        if(!userRepository.existsById(userId)){
-            throw new ResourceNotFoundException("Jogador não encontrado.");
-        }
+        userService.checkExitsById(userId, "Jogador não encontrado.");
 
         return scoreRepository
                 .findByUserId(userId)
@@ -77,9 +72,7 @@ public class ScoreRecordService {
     }
 
     public ScoreRecordResponse getUserScoreRecord(Long userId, String difficultyName){
-        if(!userRepository.existsById(userId)){
-            throw new ResourceNotFoundException("Jogador não encontrado.");
-        }
+        userService.checkExitsById(userId, "Jogador não encontrado.");
 
         DifficultyEntity difficulty = difficultyService.getByDifficultyName(difficultyName);
 

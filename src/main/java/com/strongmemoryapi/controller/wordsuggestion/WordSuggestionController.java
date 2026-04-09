@@ -21,7 +21,7 @@ public class WordSuggestionController {
 
     @GetMapping("/get-all")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<WordSuggestionResponse>> getAll(
+    ApiResponse<Page<WordSuggestionResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "suggestedWord") String sortBy
@@ -32,7 +32,7 @@ public class WordSuggestionController {
 
     @GetMapping("/get-by-period")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<WordSuggestionResponse>> getAllByPeriod(
+    ApiResponse<Page<WordSuggestionResponse>> getAllByPeriod(
             @RequestParam(required = true) LocalDate startDate,
             @RequestParam(required = true) LocalDate endDate,
             @RequestParam(defaultValue = "0") int page,
@@ -44,7 +44,7 @@ public class WordSuggestionController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<WordSuggestionResponse> register(
+    ApiResponse<WordSuggestionResponse> register(
             @RequestParam() Long userId,
             @Valid @RequestBody WordSuggestionRequest request
     ){
@@ -54,7 +54,7 @@ public class WordSuggestionController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
+    void delete(@PathVariable Long id){
         service.delete(id);
     }
 

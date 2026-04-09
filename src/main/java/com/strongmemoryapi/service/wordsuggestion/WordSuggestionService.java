@@ -10,6 +10,9 @@ import com.strongmemoryapi.repository.difficulty.DifficultyRepository;
 import com.strongmemoryapi.repository.user.UserRepository;
 import com.strongmemoryapi.repository.word.WordRepository;
 import com.strongmemoryapi.repository.wordsuggestion.WordSuggestionRepository;
+import com.strongmemoryapi.service.difficulty.DifficultyService;
+import com.strongmemoryapi.service.user.UserService;
+import com.strongmemoryapi.service.word.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +32,13 @@ public class WordSuggestionService {
     private WordSuggestionRepository suggestionRepository;
 
     @Autowired
-    private DifficultyRepository difficultyRepository;
+    private DifficultyService difficultyService;
 
     @Autowired
-    private WordRepository wordRepository;
+    private UserService userService;
 
     @Autowired
-    private UserRepository userRepository;
+    private WordService wordService;
 
     public Page<WordSuggestionResponse> getAll(
             int page,
@@ -70,20 +73,15 @@ public class WordSuggestionService {
     }
 
     public WordSuggestionResponse register(Long userId, WordSuggestionRequest request){
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário sugeridor não encontrado."));
+        UserEntity user = userService.findById(userId, "Usuário sugeridor não encontrado.");
 
-        if(wordRepository.existsByWord(request.suggestedWord())){
-            throw new ResourceAlreadyExistsException("Palavra sugerida já cadastrada.");
-        }
+        wordService.checkAlreadyExistsByWord(request.suggestedWord(), "Palavra sugerida já cadastrada.");
 
-        if(suggestionRepository.existsBysuggestedWord(request.suggestedWord())){
+        if(suggestionRepository.existsBySuggestedWord(request.suggestedWord())){
             throw new ResourceAlreadyExistsException("Palavra já sugerida.");
         }
 
-        if(!difficultyRepository.existsByDifficulty(request.suggestedDifficulty())){
-            throw new ResourceNotFoundException("Difficuldade não encontrada.");
-        }
+        difficultyService.checkExistsByDifficulty(request.suggestedDifficulty());
 
         WordSuggestionEntity suggestion = new WordSuggestionEntity();
         suggestion.setUser(user);

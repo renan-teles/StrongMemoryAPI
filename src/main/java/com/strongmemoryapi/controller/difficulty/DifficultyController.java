@@ -18,14 +18,14 @@ public class DifficultyController {
 
     @GetMapping("/get-all")
     @ResponseStatus(value = HttpStatus.OK)
-    public ApiResponse<List<DifficultyResponse>> getAll(){
+    ApiResponse<List<DifficultyResponse>> getAll(){
         List<DifficultyResponse> difficults = service.getAll();
         return new ApiResponse<>(200, "Dificuldades buscadas com sucesso.", difficults);
     }
 
     @GetMapping("/get/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public ApiResponse<DifficultyResponse> getById(@PathVariable Byte id){
+    ApiResponse<DifficultyResponse> getById(@PathVariable Byte id){
         DifficultyResponse difficulty = service.getById(id);
         return new ApiResponse<>(200, "Dificuldade buscada com sucesso.", difficulty);
     }

@@ -15,6 +15,6 @@ public interface WordSuggestionRepository extends JpaRepository<WordSuggestionEn
             Pageable pageable
     );
 
-    boolean existsBysuggestedWord(String suggestion);
+    boolean existsBySuggestedWord(String suggestion);
 
 }

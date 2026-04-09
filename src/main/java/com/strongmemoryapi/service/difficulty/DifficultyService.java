@@ -40,6 +40,11 @@ public class DifficultyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Dificuldade não encontrada."));
     }
 
+    public void checkExistsByDifficulty(String suggestion){
+        if(repository.existsByDifficulty(suggestion)) return;
+        throw new ResourceNotFoundException("Difficuldade não encontrada.");
+    }
+
     private DifficultyResponse parseToDifficultyResponse(DifficultyEntity difficulty){
         return new DifficultyResponse(
                 difficulty.getId(),
