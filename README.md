@@ -176,13 +176,13 @@ CORS_ALLOWED_ORIGINS=
 
 ### 🎮 Mini-Game / Palavras
 
-| Método | Rota                  | Descrição                                        |
-| ------ | --------------------- |--------------------------------------------------|
-| GET    | /api/word/random-list | Lista aleatória de palavras para o jogo (PLAYER) |
-| GET    | /api/word             | Listagem paginada (PLAYER E ADMIN)               |
-| POST   | /api/word             | Cadastro de palavra (ADMIN)                      |
-| PUT    | /api/word/{id}        | Atualização de palavra (ADMIN)                   |
-| DELETE | /api/word/{id}        | Remoção de palavra (ADMIN)                       |
+| Método | Rota                  | Descrição                               |
+| ------ | --------------------- |-----------------------------------------|
+| GET    | /api/word/random-list | Lista aleatória de palavras para o jogo |
+| GET    | /api/word             | Listagem paginada (PLAYER E ADMIN)      |
+| POST   | /api/word             | Cadastro de palavra (ADMIN)             |
+| PUT    | /api/word/{id}        | Atualização de palavra (ADMIN)          |
+| DELETE | /api/word/{id}        | Remoção de palavra (ADMIN)              |
 
 ### 📊 Pontuação
 
@@ -194,10 +194,10 @@ CORS_ALLOWED_ORIGINS=
 
 ### 🧠 Dificuldades
 
-| Método | Rota                 | Descrição                            |
-| ------ | -------------------- |--------------------------------------|
-| GET    | /api/difficulty      | Listar dificuldades (PLAYER E ADMIN) |
-| GET    | /api/difficulty/{id} | Buscar por ID (PLAYER E ADMIN)       |
+| Método | Rota                 | Descrição           |
+| ------ | -------------------- |---------------------|
+| GET    | /api/difficulty      | Listar dificuldades |
+| GET    | /api/difficulty/{id} | Buscar por ID       |
 
 ### 💡 Sugestões de Palavras
 
