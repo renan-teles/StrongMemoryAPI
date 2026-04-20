@@ -11,9 +11,4 @@ public interface DifficultyRepository extends JpaRepository<DifficultyEntity, By
 
     boolean existsByDifficulty(String difficulty);
 
-    /*
-    @Query(value = "SELECT d.id FROM difficults d WHERE d.difficulty = :difficulty", nativeQuery = true)
-    Optional<Long> findIdByDifficultyName(@Param("difficulty") String difficulty);
-    */
-
 }

@@ -1,4 +1,4 @@
-package com.strongmemoryapi.exception.local;
+package com.strongmemoryapi.domain.exception.local;
 
 public class InvalidCurrentPasswordException extends RuntimeException {
     public InvalidCurrentPasswordException(String message) {

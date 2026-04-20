@@ -18,15 +18,9 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
     @Query("SELECT w.id FROM WordEntity w WHERE w.difficulty = :difficulty")
     List<Long> findIdsByDifficulty(@Param("difficulty") DifficultyEntity difficulty);
 
-    Long countByDifficulty(DifficultyEntity difficulty);
-
     List<WordEntity> findByIdIn(List<Long> ids);
 
     boolean existsByWord(String word);
-
-    Optional<Byte> findDifficultyIdById(Long id);
-
-    List<Long> findIdsByDifficultyId(Byte difficultyId);
 
     /*
     @Query(value = """

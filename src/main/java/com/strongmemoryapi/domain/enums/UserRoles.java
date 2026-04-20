@@ -1,4 +1,4 @@
-package com.strongmemoryapi.enums;
+package com.strongmemoryapi.domain.enums;
 
 public enum UserRoles {
     ROLE_ADMINISTRATOR("ROLE_ADMINISTRATOR"),

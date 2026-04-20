@@ -1,13 +1,12 @@
 package com.strongmemoryapi.exception;
 
-import com.strongmemoryapi.exception.local.*;
-import com.strongmemoryapi.dto.response.ApiResponse;
+import com.strongmemoryapi.exception.local.UnauthorizedException;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
+import com.strongmemoryapi.utils.responseapi.ResponseApi;
 import org.springframework.context.MessageSourceResolvable;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -17,68 +16,43 @@ import java.util.List;
 public class GlobalHandlerException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ApiResponse<List<String>> handlerValidationException(MethodArgumentNotValidException ex){
+    public ResponseEntity<ApiDataResponse<List<String>>> handlerValidationException(
+            MethodArgumentNotValidException ex
+    ){
         List<String> validationErrors = ex.getAllErrors()
                 .stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .toList();
 
-        return new ApiResponse<>(400, "Dados inválidos.", validationErrors);
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public ApiResponse<Void> handlerInvalidCredentialsException(InvalidCredentialsException ex){
-        return new ApiResponse<>(401, ex.getMessage());
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ApiResponse<Void> handlerUsernameNotFoundException(UsernameNotFoundException ex){
-        return new ApiResponse<>(404, ex.getMessage());
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ApiResponse<Void> handlerResourceNotFoundException(ResourceNotFoundException ex){
-        return new ApiResponse<>(404, ex.getMessage());
-    }
-
-    @ExceptionHandler(InsufficientWordsException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ApiResponse<Void> handleInsufficientWordsException(InsufficientWordsException ex) {
-        return new ApiResponse<>(400, ex.getMessage());
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ApiResponse<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return new ApiResponse<>(400, ex.getMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse<Void> handleGenericException(Exception ex) {
-        return new ApiResponse<>(500, "Erro interno no servidor.");
-    }
-
-    @ExceptionHandler(ResourceAlreadyExistsException.class)
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    public ApiResponse<Void> handlerResourceAlreadyExistsException(ResourceAlreadyExistsException ex){
-        return new ApiResponse<>(409, ex.getMessage());
+        return ResponseApi.badRequestResponse(validationErrors, "Dados inválidos.");
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return new ApiResponse<>(400, "Parâmetro inválido.");
+    public ResponseEntity<ApiDataResponse<Void>> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex
+    ) {
+        return ResponseApi.badRequestResponse("Parâmetro inválido.");
     }
 
-    @ExceptionHandler(InvalidCurrentPasswordException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ApiResponse<Void> handlerInvalidCurrentPasswordException(InvalidCurrentPasswordException ex){
-        return new ApiResponse<>(400, ex.getMessage());
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handleIllegalArgumentException(
+            IllegalArgumentException ex
+    ) {
+        return ResponseApi.badRequestResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiDataResponse<Void>> handleGenericException(
+            Exception ex
+    ) {
+        return ResponseApi.internalErrorResponse();
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handlerUnauthorizedExceptionException(
+            UnauthorizedException ex
+    ){
+        return ResponseApi.unauthorizedResponse(ex.getMessage());
     }
 
 }

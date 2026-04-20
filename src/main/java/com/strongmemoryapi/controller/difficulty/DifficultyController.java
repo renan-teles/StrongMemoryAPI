@@ -1,10 +1,12 @@
 package com.strongmemoryapi.controller.difficulty;
 
-import com.strongmemoryapi.dto.response.ApiResponse;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
 import com.strongmemoryapi.dto.response.DifficultyResponse;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
+import com.strongmemoryapi.utils.mapper.DifficultyMapper;
+import com.strongmemoryapi.utils.responseapi.ResponseApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,18 +18,23 @@ public class DifficultyController {
     @Autowired
     private DifficultyService service;
 
-    @GetMapping("/get-all")
-    @ResponseStatus(value = HttpStatus.OK)
-    ApiResponse<List<DifficultyResponse>> getAll(){
-        List<DifficultyResponse> difficults = service.getAll();
-        return new ApiResponse<>(200, "Dificuldades buscadas com sucesso.", difficults);
+    @GetMapping
+    ResponseEntity<ApiDataResponse<List<DifficultyResponse>>> getAll(){
+        List<DifficultyResponse> difficulties = service
+                .findAll()
+                .stream()
+                .map(DifficultyMapper::toDTO)
+                .toList();
+
+        return ResponseApi.okResponse(difficulties, "Dificuldades buscadas com sucesso.");
     }
 
-    @GetMapping("/get/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    ApiResponse<DifficultyResponse> getById(@PathVariable Byte id){
-        DifficultyResponse difficulty = service.getById(id);
-        return new ApiResponse<>(200, "Dificuldade buscada com sucesso.", difficulty);
+    @GetMapping("/{id}")
+    ResponseEntity<ApiDataResponse<DifficultyResponse>> getById(
+            @PathVariable Byte id
+    ){
+        DifficultyResponse difficulty = DifficultyMapper.toDTO(service.findById(id));
+        return  ResponseApi.okResponse(difficulty, "Dificuldade buscada com sucesso.");
     }
 
 }

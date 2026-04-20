@@ -1,6 +1,7 @@
 package com.strongmemoryapi.security.jwt;
 
-import com.strongmemoryapi.service.user.CustomUserDetailsService;
+import com.strongmemoryapi.service.user.details.CustomUserDetailsService;
+import com.strongmemoryapi.utils.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,14 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -51,17 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = jwtUtil.extractUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
+        /*
         String role = jwtUtil.extractRole(token);
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+        */
 
-        UsernamePasswordAuthenticationToken authToken =
+        UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        Collections.singletonList(authority)
+                        userDetails.getAuthorities()
                 );
 
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 }

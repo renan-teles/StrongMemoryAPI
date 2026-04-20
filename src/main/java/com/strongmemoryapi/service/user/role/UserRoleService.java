@@ -1,8 +1,8 @@
 package com.strongmemoryapi.service.user.role;
 
 import com.strongmemoryapi.domain.entity.user.role.UserRoleEntity;
-import com.strongmemoryapi.enums.UserRoles;
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
+import com.strongmemoryapi.domain.enums.UserRoles;
+import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.repository.user.role.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,16 +13,16 @@ public class UserRoleService {
     @Autowired
     private UserRoleRepository repository;
 
-    public UserRoleEntity getAdministratorRole(){
-        return this.getUserRole(UserRoles.ROLE_ADMINISTRATOR);
+    public UserRoleEntity findAdministratorRole(){
+        return this.findUserRole(UserRoles.ROLE_ADMINISTRATOR);
     }
 
-    public UserRoleEntity getPlayerRole(){
-        return this.getUserRole(UserRoles.ROLE_PLAYER);
+    public UserRoleEntity findPlayerRole(){
+        return this.findUserRole(UserRoles.ROLE_PLAYER);
     }
 
-    public UserRoleEntity getUserRole(UserRoles role){
-        return this.repository.findByRole(role.toString())
+    public UserRoleEntity findUserRole(UserRoles role){
+        return repository.findByRole(role.toString())
                 .orElseThrow(() -> new ResourceNotFoundException(
                             "Papel do usuário não encontrado."
                         )

@@ -1,4 +1,4 @@
-package com.strongmemoryapi.exception.local;
+package com.strongmemoryapi.domain.exception.local;
 
 public class InvalidCredentialsException extends RuntimeException{
     public InvalidCredentialsException(String msg){

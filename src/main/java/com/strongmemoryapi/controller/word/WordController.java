@@ -1,14 +1,16 @@
 package com.strongmemoryapi.controller.word;
 
-import com.strongmemoryapi.dto.response.ApiResponse;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
 import com.strongmemoryapi.dto.request.word.WordRegistrationRequest;
 import com.strongmemoryapi.dto.request.word.WordUpdateRequest;
 import com.strongmemoryapi.dto.response.WordResponse;
 import com.strongmemoryapi.service.word.WordService;
+import com.strongmemoryapi.utils.mapper.WordMapper;
+import com.strongmemoryapi.utils.responseapi.ResponseApi;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,45 +22,58 @@ public class WordController {
     @Autowired
     private WordService service;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    ApiResponse<WordResponse> register(@Valid @RequestBody WordRegistrationRequest request){
-        WordResponse res = service.register(request);
-        return new ApiResponse<>(201, "Palavra cadastrada com sucesso.", res);
-    }
-
-    @PutMapping("/update/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void update(@PathVariable Long id, @Valid @RequestBody WordUpdateRequest request){
-        service.update(id, request);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable Long id){
-        service.delete(id);
-    }
-
-    @GetMapping("/get-random-list")
-    @ResponseStatus(HttpStatus.OK)
-    ApiResponse<List<WordResponse>> getRandomWords(
-            @RequestParam String difficulty,
-            @RequestParam(name = "quantity") int wordsQuantity
+    @PostMapping
+    public ResponseEntity<ApiDataResponse<WordResponse>> register(
+            @Valid @RequestBody WordRegistrationRequest request
     ){
-        List<WordResponse> res = service.getRandomWords(difficulty, wordsQuantity);
-        return new ApiResponse<>(200, "Palavras sorteadas com sucesso.", res);
+        WordResponse createdWord = WordMapper.toDTO(service.register(request));
+        return ResponseApi
+                .createdResponse(createdWord, "Palavra cadastrada com sucesso.");
     }
 
-    @GetMapping("/get-by-difficulty")
-    @ResponseStatus(HttpStatus.OK)
-    ApiResponse<Page<WordResponse>> getAllByDifficulty(
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(
+            @PathVariable Long id,
+            @Valid @RequestBody WordUpdateRequest request
+    ){
+        service.update(id, request);
+        return ResponseApi.noContentResponse();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseApi.noContentResponse();
+    }
+
+    @GetMapping("/random-list")
+    public ResponseEntity<ApiDataResponse<List<WordResponse>>> getRandomList(
+            @RequestParam String difficulty,
+            @RequestParam int quantity
+    ){
+        List<WordResponse> randomWords = service
+                .findRandomWords(difficulty, quantity)
+                .stream()
+                .map(WordMapper::toDTO)
+                .toList();
+
+        return ResponseApi
+                .okResponse(randomWords, "Palavras sorteadas com sucesso.");
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiDataResponse<Page<WordResponse>>> getByDifficulty(
             @RequestParam(defaultValue = "easy") String difficulty,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "word") String sortBy
     ){
-        Page<WordResponse> res = service.getAllByDifficulty(difficulty, page, size, sortBy);
-        return new ApiResponse<>(200, "Palavras buscadas com sucesso.", res);
+        Page<WordResponse> wordsByDifficulty = service
+                .findByDifficulty(difficulty, page, size, sortBy)
+                .map(WordMapper::toDTO);
+
+        return ResponseApi
+                .okResponse(wordsByDifficulty, "Palavras buscadas com sucesso.");
     }
 
 }

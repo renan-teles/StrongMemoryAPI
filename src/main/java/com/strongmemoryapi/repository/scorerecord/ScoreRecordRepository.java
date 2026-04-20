@@ -13,4 +13,6 @@ public interface ScoreRecordRepository extends JpaRepository<ScoreRecordEntity, 
 
     Optional<ScoreRecordEntity> findByUserIdAndDifficulty(Long userId, DifficultyEntity difficulty);
 
+    Optional<ScoreRecordEntity> findByIdAndUserId(Long id, Long userId);
+
 }
