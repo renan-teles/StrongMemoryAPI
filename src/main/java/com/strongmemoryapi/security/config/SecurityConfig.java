@@ -3,6 +3,7 @@ package com.strongmemoryapi.security.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,9 +24,11 @@ public class SecurityConfig extends AbstractSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         commonConfig.apply(http, filter);
 
-        http.authorizeHttpRequests(
-                auth -> auth.anyRequest().authenticated()
-        );
+        http
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/actuator/health").permitAll()
+                    .anyRequest().authenticated()
+            );
 
         return http.build();
     }
