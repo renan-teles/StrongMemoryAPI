@@ -15,13 +15,17 @@ public class CorsConfig {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
+    @Value(value = "${cors.allow-all}")
+    private boolean allowAll;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
-        //config.setAllowedOriginPatterns(List.of("*"));
+
+        setAllowedOrigins(config);
+
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
 
@@ -29,6 +33,14 @@ public class CorsConfig {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    private void setAllowedOrigins(CorsConfiguration config){
+        if (allowAll) {
+            config.setAllowedOriginPatterns(List.of("*"));
+            return;
+        }
+        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
     }
 
 }

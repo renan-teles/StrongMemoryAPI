@@ -1,4 +1,4 @@
-package com.strongmemoryapi.exception.local;
+package com.strongmemoryapi.domain.exception.local;
 
 public class InsufficientWordsException extends RuntimeException{
     public InsufficientWordsException(String msg){

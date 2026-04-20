@@ -1,11 +1,10 @@
 package com.strongmemoryapi.service.user.player;
 
-import com.strongmemoryapi.enums.UserRoles;
+import com.strongmemoryapi.domain.enums.UserRoles;
 import com.strongmemoryapi.dto.request.user.AuthRequest;
 import com.strongmemoryapi.dto.request.user.UserPasswordUpdateRequest;
 import com.strongmemoryapi.dto.request.user.UserRequest;
 import com.strongmemoryapi.dto.response.AuthResponse;
-import com.strongmemoryapi.dto.response.UserResponse;
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import com.strongmemoryapi.service.scorerecord.ScoreRecordService;
 import com.strongmemoryapi.service.user.AbstractUserService;
@@ -21,11 +20,10 @@ public class PlayerAbstractUserService extends AbstractUserService {
 
     @Override
     @Transactional
-    public UserResponse register(UserRequest request){
+    public UserEntity register(UserRequest request){
         UserEntity createdUser = register(request, UserRoles.ROLE_PLAYER);
-        scoreService.registerInitialUserScores(createdUser);
-
-        return parseToUserResponse(createdUser);
+        scoreService.createInitialUserScores(createdUser);
+        return createdUser;
     }
 
     @Override

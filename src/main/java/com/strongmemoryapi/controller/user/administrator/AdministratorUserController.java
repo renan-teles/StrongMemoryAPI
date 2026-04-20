@@ -3,13 +3,16 @@ package com.strongmemoryapi.controller.user.administrator;
 import com.strongmemoryapi.dto.request.user.AuthRequest;
 import com.strongmemoryapi.dto.request.user.UserPasswordUpdateRequest;
 import com.strongmemoryapi.dto.request.user.UserRequest;
-import com.strongmemoryapi.dto.response.ApiResponse;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
 import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
 import com.strongmemoryapi.service.user.administrator.AdministratorAbstractUserService;
+import com.strongmemoryapi.utils.mapper.UserMapper;
+import com.strongmemoryapi.utils.responseapi.ResponseApi;
+import com.strongmemoryapi.utils.security.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,27 +22,31 @@ public class AdministratorUserController {
     @Autowired
     private AdministratorAbstractUserService service;
 
-    @PostMapping("/register")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    ApiResponse<UserResponse> register (@Valid @RequestBody UserRequest request){
-        UserResponse res = service.register(request);
-        return new ApiResponse<>(201, "Administrador cadastrado com sucesso.", res);
-    }
-
-    @PutMapping("/update-password/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    void updatePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody UserPasswordUpdateRequest request
+    @PostMapping
+    public ResponseEntity<ApiDataResponse<UserResponse>> register (
+            @Valid @RequestBody UserRequest request
     ){
-        service.updatePassword(id, request);
+        UserResponse registeredUser = UserMapper.toDTO(service.register(request));
+        return ResponseApi
+                .createdResponse(registeredUser, "Administrador cadastrado com sucesso.");
     }
 
     @PostMapping("/auth")
-    @ResponseStatus(value = HttpStatus.OK)
-    ApiResponse<AuthResponse> auth(@Valid @RequestBody AuthRequest request){
-        AuthResponse res = service.auth(request);
-        return new ApiResponse<>(200, "Autenticação de administrador realizada com sucesso.", res);
+    public ResponseEntity<ApiDataResponse<AuthResponse>> auth(
+            @Valid @RequestBody AuthRequest request
+    ){
+        AuthResponse token = service.auth(request);
+        return ResponseApi
+                .okResponse(token, "Autenticação de administrador realizada com sucesso.");
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<Void> updatePassword(
+            @Valid @RequestBody UserPasswordUpdateRequest request
+    ){
+        Long userId = SecurityUtils.getCurrentUserId();
+        service.updatePassword(userId, request);
+        return ResponseApi.noContentResponse();
     }
 
 }

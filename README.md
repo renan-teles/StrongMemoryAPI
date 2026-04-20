@@ -8,7 +8,7 @@ O sistema fornece toda a infraestrutura backend necessária para execução do m
 
 ## 🚀 Sobre o Projeto
 
-O **Strong Memory (SM)** é uma aplicação interativa que desafia o usuário a memorizar e reproduzir sequências de palavras sob condições de tempo e dificuldade progressiva.
+O **SM** é uma aplicação interativa que desafia o usuário a memorizar e reproduzir sequências de palavras sob condições de tempo e dificuldade progressiva.
 
 A proposta central é estimular:
 
@@ -140,12 +140,18 @@ docker-compose up -d
 ## 🔐 Variáveis de Ambiente
 
 ```env
+SPRING_PROFILES_ACTIVE=
+
 SPRING_DATASOURCE_URL=
 SPRING_DATASOURCE_USERNAME=
 SPRING_DATASOURCE_PASSWORD=
 
 SPRING_REDIS_HOST=
 SPRING_REDIS_PORT=
+
+JWT_SECRET_KEY=
+
+CORS_ALLOWED_ORIGINS=
 ```
 
 <br/>
@@ -161,44 +167,46 @@ SPRING_REDIS_PORT=
 
 ### 👤 Usuários
 
-| Método | Rota                             | Descrição                 |
-| ------ | -------------------------------- | ------------------------- |
-| POST   | /api/player/register             | Cadastro de jogador       |
-| PUT    | /api/player/update-password/{id} | Atualizar senha           |
-| POST   | /api/administrator/register      | Cadastro de administrador |
+| Método | Rota                           | Descrição                                |
+| ------ | ------------------------------ |------------------------------------------|
+| POST   | /api/player                    | Cadastro de jogador                      |
+| POST   | /api/administrator             | Cadastro de administrador                |
+| PUT    | /api/player/me/password        | Atualizar senha do jogador (PLAYER)      |
+| PUT    | /api/administrator/me/password | Atualizar senha do administrador (ADMIN) |
 
 ### 🎮 Mini-Game / Palavras
 
-| Método | Rota                        | Descrição                         |
-| ------ | --------------------------- | --------------------------------- |
-| GET    | /api/word/get-random-list   | Lista aleatória de palavras       |
-| GET    | /api/word/get-by-difficulty | Listagem paginada por dificuldade |
-
+| Método | Rota                  | Descrição                                        |
+| ------ | --------------------- |--------------------------------------------------|
+| GET    | /api/word/random-list | Lista aleatória de palavras para o jogo (PLAYER) |
+| GET    | /api/word             | Listagem paginada (PLAYER E ADMIN)               |
+| POST   | /api/word             | Cadastro de palavra (ADMIN)                      |
+| PUT    | /api/word/{id}        | Atualização de palavra (ADMIN)                   |
+| DELETE | /api/word/{id}        | Remoção de palavra (ADMIN)                       |
 
 ### 📊 Pontuação
 
-| Método | Rota                              | Descrição                 |
-| ------ | --------------------------------- | ------------------------- |
-| GET    | /api/score-record/get-user-scores | Pontuações do usuário     |
-| GET    | /api/score-record/get-user-score  | Pontuação por dificuldade |
-| PUT    | /api/score-record/update/{id}     | Atualizar pontuação       |
+| Método | Rota                               | Descrição                               |
+| ------ |------------------------------------|-----------------------------------------|
+| GET    | /api/player/me/scores              | Todas as pontuações do usuário (PLAYER) |
+| GET    | /api/player/me/score               | Pontuação por dificuldade (PLAYER)      |
+| PUT    | /api/player/me/new-score/{scoreId} | Atualizar pontuação (PLAYER)            |
 
 ### 🧠 Dificuldades
 
-| Método | Rota                     | Descrição           |
-| ------ | ------------------------ | ------------------- |
-| GET    | /api/difficulty/get-all  | Listar dificuldades |
-| GET    | /api/difficulty/get/{id} | Buscar por ID       |
-
+| Método | Rota                 | Descrição                            |
+| ------ | -------------------- |--------------------------------------|
+| GET    | /api/difficulty      | Listar dificuldades (PLAYER E ADMIN) |
+| GET    | /api/difficulty/{id} | Buscar por ID (PLAYER E ADMIN)       |
 
 ### 💡 Sugestões de Palavras
 
-| Método | Rota                               | Descrição        |
-| ------ | ---------------------------------- | ---------------- |
-| POST   | /api/word-suggestion/register      | Criar sugestão   |
-| GET    | /api/word-suggestion/get-all       | Listar sugestões |
-| GET    | /api/word-suggestion/get-by-period | Filtrar por data |
-| DELETE | /api/word-suggestion/delete/{id}   | Remover sugestão |
+| Método | Rota                        | Descrição                             |
+| ------ | --------------------------- | ------------------------------------- |
+| POST   | /api/word-suggestion        | Criar sugestão (PLAYER)               |
+| GET    | /api/word-suggestion        | Listar sugestões (ADMIN)              |
+| GET    | /api/word-suggestion/period | Filtrar sugestões por período (ADMIN) |
+| DELETE | /api/word-suggestion/{id}   | Remover sugestão (ADMIN)              |
 
 <br/>
 

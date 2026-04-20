@@ -1,13 +1,16 @@
 package com.strongmemoryapi.controller.wordsuggestion;
 
-import com.strongmemoryapi.dto.response.ApiResponse;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
 import com.strongmemoryapi.dto.request.wordsuggestion.WordSuggestionRequest;
 import com.strongmemoryapi.dto.response.WordSuggestionResponse;
 import com.strongmemoryapi.service.wordsuggestion.WordSuggestionService;
+import com.strongmemoryapi.utils.mapper.WordSuggestionMapper;
+import com.strongmemoryapi.utils.responseapi.ResponseApi;
+import com.strongmemoryapi.utils.security.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,43 +22,52 @@ public class WordSuggestionController {
     @Autowired
     private WordSuggestionService service;
 
-    @GetMapping("/get-all")
-    @ResponseStatus(HttpStatus.OK)
-    ApiResponse<Page<WordSuggestionResponse>> getAll(
+    @GetMapping
+    public ResponseEntity<ApiDataResponse<Page<WordSuggestionResponse>>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "suggestedWord") String sortBy
     ){
-        Page<WordSuggestionResponse> res = service.getAll(page, size, sortBy);
-        return new ApiResponse<>(200, "Sugestões de palavras buscadas com sucesso.", res);
+        Page<WordSuggestionResponse> suggestions = service
+                .findAll(page, size, sortBy)
+                .map(WordSuggestionMapper::toDTO);
+
+        return ResponseApi
+                .okResponse(suggestions, "Sugestões de palavras buscadas com sucesso.");
     }
 
-    @GetMapping("/get-by-period")
-    @ResponseStatus(HttpStatus.OK)
-    ApiResponse<Page<WordSuggestionResponse>> getAllByPeriod(
-            @RequestParam(required = true) LocalDate startDate,
-            @RequestParam(required = true) LocalDate endDate,
+    @GetMapping("/period")
+    public ResponseEntity<ApiDataResponse<Page<WordSuggestionResponse>>> getByPeriod(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ){
-        Page<WordSuggestionResponse> res = service.getByPeriod(startDate, endDate, page, size);
-        return new ApiResponse<>(200, "Sugestões de palavras buscadas com sucesso.", res);
+        Page<WordSuggestionResponse> suggestions = service
+                .findByPeriod(startDate, endDate, page, size).map(WordSuggestionMapper::toDTO);
+
+        return ResponseApi
+                .okResponse(suggestions, "Sugestões de palavras buscadas com sucesso.");
     }
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    ApiResponse<WordSuggestionResponse> register(
-            @RequestParam() Long userId,
+    @PostMapping
+    public ResponseEntity<ApiDataResponse<WordSuggestionResponse>> register(
             @Valid @RequestBody WordSuggestionRequest request
     ){
-        WordSuggestionResponse res = service.register(userId, request);
-        return new ApiResponse<>(201, "Sugestão de palavra cadastrada com sucesso.", res);
+        Long userId = SecurityUtils.getCurrentUserId();
+        WordSuggestionResponse createdSuggestion = WordSuggestionMapper
+                .toDTO(service.register(userId, request));
+
+        return ResponseApi
+                .createdResponse(createdSuggestion, "Sugestão de palavra cadastrada com sucesso.");
     }
 
-    @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ){
         service.delete(id);
+        return ResponseApi.noContentResponse();
     }
 
 }

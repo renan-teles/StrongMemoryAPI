@@ -1,10 +1,9 @@
-package com.strongmemoryapi.service.user;
+package com.strongmemoryapi.service.user.details;
 
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import com.strongmemoryapi.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,9 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserEntity user = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getRole());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
+                user.getRole().getRole()
+        );
 
-        return new org.springframework.security.core.userdetails.User(
+        return new UserDetailsImpl(
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(authority)

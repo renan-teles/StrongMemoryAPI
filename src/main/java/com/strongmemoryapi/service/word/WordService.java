@@ -1,11 +1,10 @@
 package com.strongmemoryapi.service.word;
 
-import com.strongmemoryapi.exception.local.InsufficientWordsException;
-import com.strongmemoryapi.exception.local.ResourceAlreadyExistsException;
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
+import com.strongmemoryapi.domain.exception.local.InsufficientWordsException;
+import com.strongmemoryapi.domain.exception.local.ResourceAlreadyExistsException;
+import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.dto.request.word.WordRegistrationRequest;
 import com.strongmemoryapi.dto.request.word.WordUpdateRequest;
-import com.strongmemoryapi.dto.response.WordResponse;
 import com.strongmemoryapi.domain.entity.difficulty.DifficultyEntity;
 import com.strongmemoryapi.domain.entity.word.WordEntity;
 import com.strongmemoryapi.repository.word.WordRepository;
@@ -35,17 +34,18 @@ public class WordService {
     private WordCacheService cacheService;
 
     @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
-    public WordResponse register(WordRegistrationRequest request){
+    public WordEntity register(WordRegistrationRequest request){
         if(wordRepository.existsByWord(request.word())){
             throw new ResourceAlreadyExistsException("Palavra já cadastrada.");
         }
 
-        DifficultyEntity difficulty = difficultyService.getByDifficultyName(request.difficulty());
+        DifficultyEntity difficulty = difficultyService.findByDifficultyName(request.difficulty());
+
         WordEntity word = new WordEntity();
         word.setWord(request.word().toLowerCase());
         word.setDifficulty(difficulty);
 
-        return this.parseToWordResponse(wordRepository.save(word));
+        return wordRepository.save(word);
     }
 
     @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
@@ -65,12 +65,12 @@ public class WordService {
         wordRepository.deleteById(id);
     }
 
-    public List<WordResponse> getRandomWords(String difficulty, int quantityWords){
+    public List<WordEntity> findRandomWords(String difficulty, int quantityWords){
         if(quantityWords < 2){
             throw new IllegalArgumentException("Quantidade de palavras inválida para sorteio.");
         }
 
-        DifficultyEntity currentDifficulty = difficultyService.getByDifficultyName(difficulty);
+        DifficultyEntity currentDifficulty = difficultyService.findByDifficultyName(difficulty);
 
         List<Long> wordsIds = new ArrayList<>(cacheService.findIdsByDifficulty(currentDifficulty));
 
@@ -82,38 +82,26 @@ public class WordService {
         Collections.shuffle(wordsIds);
         List<Long> selectedIds = wordsIds.subList(0, quantityWords);
 
-        return wordRepository
-                .findByIdIn(selectedIds)
-                .stream()
-                .map(this::parseToWordResponse)
-                .toList();
+        return wordRepository.findByIdIn(selectedIds);
     }
 
-    public Page<WordResponse> getAllByDifficulty(
+    public Page<WordEntity> findByDifficulty(
             String difficulty,
             int page,
             int size,
             String sortBy
     ){
-        DifficultyEntity currentDifficulty = difficultyService.getByDifficultyName(difficulty);
+        DifficultyEntity currentDifficulty = difficultyService.findByDifficultyName(difficulty);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
         return wordRepository
-                .findAllByDifficulty(pageable, currentDifficulty)
-                .map(this::parseToWordResponse);
+                .findAllByDifficulty(pageable, currentDifficulty);
     }
 
     public void checkAlreadyExistsByWord(String word, String exceptionMessage){
         if(!wordRepository.existsByWord(word)) return;
         throw new ResourceAlreadyExistsException(exceptionMessage);
-    }
-
-    private WordResponse parseToWordResponse(WordEntity word){
-        return new WordResponse(
-                word.getId(),
-                word.getWord(),
-                word.getDifficulty().getDifficulty()
-        );
     }
 
 }

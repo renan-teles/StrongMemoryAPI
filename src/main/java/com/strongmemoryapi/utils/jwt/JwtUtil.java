@@ -1,4 +1,4 @@
-package com.strongmemoryapi.security.jwt;
+package com.strongmemoryapi.utils.jwt;
 
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import io.jsonwebtoken.Claims;
@@ -24,6 +24,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .claim("role", user.getRole().getRole())
+                .claim("id", user.getId())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey())
@@ -38,12 +39,17 @@ public class JwtUtil {
         return extractClaims(token).get("role", String.class);
     }
 
+    public Long extractId(String token) {
+        return extractClaims(token).get("id", Long.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith(getKey())
                     .build()
                     .parseSignedClaims(token);
+
             return true;
         } catch (Exception ex) {
             return false;

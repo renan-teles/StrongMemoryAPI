@@ -1,14 +1,10 @@
 package com.strongmemoryapi.service.wordsuggestion;
 
-import com.strongmemoryapi.exception.local.ResourceAlreadyExistsException;
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
+import com.strongmemoryapi.domain.exception.local.ResourceAlreadyExistsException;
+import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.dto.request.wordsuggestion.WordSuggestionRequest;
-import com.strongmemoryapi.dto.response.WordSuggestionResponse;
 import com.strongmemoryapi.domain.entity.user.UserEntity;
 import com.strongmemoryapi.domain.entity.wordsuggestion.WordSuggestionEntity;
-import com.strongmemoryapi.repository.difficulty.DifficultyRepository;
-import com.strongmemoryapi.repository.user.UserRepository;
-import com.strongmemoryapi.repository.word.WordRepository;
 import com.strongmemoryapi.repository.wordsuggestion.WordSuggestionRepository;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
 import com.strongmemoryapi.service.user.UserService;
@@ -22,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service
@@ -40,18 +35,16 @@ public class WordSuggestionService {
     @Autowired
     private WordService wordService;
 
-    public Page<WordSuggestionResponse> getAll(
+    public Page<WordSuggestionEntity> findAll(
             int page,
             int size,
             String sortBy
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return suggestionRepository
-                .findAll(pageable)
-                .map(this::partoToWordSuggestionResponse);
+        return suggestionRepository.findAll(pageable);
     }
 
-    public Page<WordSuggestionResponse> getByPeriod(
+    public Page<WordSuggestionEntity> findByPeriod(
             LocalDate startDate,
             LocalDate endDate,
             int page,
@@ -66,16 +59,22 @@ public class WordSuggestionService {
         Instant start = startDate.atStartOfDay(ZoneOffset.UTC).toInstant();
         Instant end = endDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
 
-        Page<WordSuggestionEntity> suggestions =
-                suggestionRepository.findBySuggestedAtBetween(start, end, pageable);
-
-        return suggestions.map(this::partoToWordSuggestionResponse);
+        return suggestionRepository.findBySuggestedAtBetween(start, end, pageable);
     }
 
-    public WordSuggestionResponse register(Long userId, WordSuggestionRequest request){
-        UserEntity user = userService.findById(userId, "Usuário sugeridor não encontrado.");
+    public WordSuggestionEntity register(
+            Long userId,
+            WordSuggestionRequest request
+    ){
+        UserEntity user = userService.findById(
+                userId,
+                "Usuário sugeridor não encontrado."
+        );
 
-        wordService.checkAlreadyExistsByWord(request.suggestedWord(), "Palavra sugerida já cadastrada.");
+        wordService.checkAlreadyExistsByWord(
+                request.suggestedWord(),
+                "Palavra sugerida já cadastrada."
+        );
 
         if(suggestionRepository.existsBySuggestedWord(request.suggestedWord())){
             throw new ResourceAlreadyExistsException("Palavra já sugerida.");
@@ -88,7 +87,7 @@ public class WordSuggestionService {
         suggestion.setSuggestedWord(request.suggestedWord().toLowerCase());
         suggestion.setSuggestedDifficulty(request.suggestedDifficulty().toLowerCase());
 
-        return partoToWordSuggestionResponse(suggestionRepository.save(suggestion));
+        return suggestionRepository.save(suggestion);
     }
 
     public void delete(Long id){
@@ -96,17 +95,6 @@ public class WordSuggestionService {
             throw new ResourceNotFoundException("Sugestão de palavra não encontrada.");
         }
         suggestionRepository.deleteById(id);
-    }
-
-    private WordSuggestionResponse partoToWordSuggestionResponse(WordSuggestionEntity suggestion){
-        return new WordSuggestionResponse(
-                suggestion.getId(),
-                suggestion.getSuggestedWord(),
-                suggestion.getSuggestedDifficulty(),
-                suggestion.getSuggestedAt(),
-                suggestion.getUser().getUsername(),
-                suggestion.getUser().getEmail()
-        );
     }
 
 }

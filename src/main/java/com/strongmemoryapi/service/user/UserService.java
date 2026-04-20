@@ -1,9 +1,11 @@
 package com.strongmemoryapi.service.user;
 
 import com.strongmemoryapi.domain.entity.user.UserEntity;
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
+import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.repository.user.UserRepository;
+import com.strongmemoryapi.utils.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,3 +26,5 @@ public class UserService {
     }
 
 }
+
+

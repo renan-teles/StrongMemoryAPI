@@ -1,7 +1,6 @@
 package com.strongmemoryapi.service.difficulty;
 
-import com.strongmemoryapi.exception.local.ResourceNotFoundException;
-import com.strongmemoryapi.dto.response.DifficultyResponse;
+import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.domain.entity.difficulty.DifficultyEntity;
 import com.strongmemoryapi.repository.difficulty.DifficultyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,46 +12,32 @@ import java.util.List;
 @Service
 public class DifficultyService {
 
+    private final String DIFF_NOT_FOUND_MSG = "Dificuldade não encontrada.";
+
     @Autowired
     private DifficultyRepository repository;
 
-    public List<DifficultyResponse> getAll(){
-        return repository
-                .findAll(Sort.by("id"))
-                .stream()
-                .map(this::parseToDifficultyResponse)
-                .toList();
+    public List<DifficultyEntity> findAll(){
+        return repository.findAll(Sort.by("id"));
     }
 
-    public List<DifficultyEntity> getAllEntityObjects(){
+    public List<DifficultyEntity> findAllEntityObjects(){
         return repository.findAll();
     }
 
-    public DifficultyResponse getById(Byte id){
-        DifficultyEntity difficulty = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Dificuldade não encontrada."));
-
-        return parseToDifficultyResponse(difficulty);
+    public DifficultyEntity findById(Byte id){
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(DIFF_NOT_FOUND_MSG));
     }
 
-    public DifficultyEntity getByDifficultyName(String difficultyName){
+    public DifficultyEntity findByDifficultyName(String difficultyName){
         return repository.findByDifficulty(difficultyName)
-                .orElseThrow(() -> new ResourceNotFoundException("Dificuldade não encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException(DIFF_NOT_FOUND_MSG));
     }
 
     public void checkExistsByDifficulty(String suggestion){
         if(repository.existsByDifficulty(suggestion)) return;
-        throw new ResourceNotFoundException("Difficuldade não encontrada.");
+        throw new ResourceNotFoundException(DIFF_NOT_FOUND_MSG);
     }
 
-    private DifficultyResponse parseToDifficultyResponse(DifficultyEntity difficulty){
-        return new DifficultyResponse(
-                difficulty.getId(),
-                difficulty.getDifficulty(),
-                difficulty.getTranslation(),
-                difficulty.getMaxQuantityWords(),
-                difficulty.getIncreaseDisplayTimeSeconds(),
-                difficulty.getIncreaseTypingTimeSeconds()
-        );
-    }
 }

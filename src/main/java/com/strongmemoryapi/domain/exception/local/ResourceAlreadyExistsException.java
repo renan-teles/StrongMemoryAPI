@@ -1,4 +1,4 @@
-package com.strongmemoryapi.exception.local;
+package com.strongmemoryapi.domain.exception.local;
 
 public class ResourceAlreadyExistsException extends RuntimeException{
     public ResourceAlreadyExistsException(String msg){
