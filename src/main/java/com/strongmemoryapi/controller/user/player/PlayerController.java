@@ -9,7 +9,7 @@ import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.ScoreRecordResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
 import com.strongmemoryapi.service.scorerecord.ScoreRecordService;
-import com.strongmemoryapi.service.user.player.PlayerAbstractUserService;
+import com.strongmemoryapi.service.user.player.PlayerService;
 import com.strongmemoryapi.utils.mapper.ScoreRecordMapper;
 import com.strongmemoryapi.utils.mapper.UserMapper;
 import com.strongmemoryapi.utils.responseapi.ResponseApi;
@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/player", produces = "application/json;charset=UTF-8")
-public class PlayerUserController {
+@RequestMapping(value = "/api/player", produces = "application/json;charset=UTF-8")
+public class PlayerController {
 
     @Autowired
-    private PlayerAbstractUserService playerService;
+    private PlayerService playerService;
 
     @Autowired
     private ScoreRecordService scoreService;

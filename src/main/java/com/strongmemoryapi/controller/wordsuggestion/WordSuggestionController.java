@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping(value = "api/word-suggestion", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/api/word-suggestion", produces = "application/json;charset=UTF-8")
 public class WordSuggestionController {
 
     @Autowired

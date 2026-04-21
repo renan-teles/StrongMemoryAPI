@@ -6,7 +6,7 @@ import com.strongmemoryapi.dto.request.user.UserRequest;
 import com.strongmemoryapi.dto.response.ApiDataResponse;
 import com.strongmemoryapi.dto.response.AuthResponse;
 import com.strongmemoryapi.dto.response.UserResponse;
-import com.strongmemoryapi.service.user.administrator.AdministratorAbstractUserService;
+import com.strongmemoryapi.service.user.administrator.AdministratorService;
 import com.strongmemoryapi.utils.mapper.UserMapper;
 import com.strongmemoryapi.utils.responseapi.ResponseApi;
 import com.strongmemoryapi.utils.security.SecurityUtils;
@@ -16,11 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "api/administrator", produces = "application/json;charset=UTF-8")
-public class AdministratorUserController {
+@RequestMapping(value = "/api/administrator", produces = "application/json;charset=UTF-8")
+public class AdministratorController {
 
     @Autowired
-    private AdministratorAbstractUserService service;
+    private AdministratorService service;
 
     @PostMapping
     public ResponseEntity<ApiDataResponse<UserResponse>> register (

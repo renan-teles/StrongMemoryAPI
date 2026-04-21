@@ -10,7 +10,7 @@ import com.strongmemoryapi.service.user.AbstractUserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdministratorAbstractUserService extends AbstractUserService {
+public class AdministratorService extends AbstractUserService {
 
     @Override
     public UserEntity register(UserRequest request) {

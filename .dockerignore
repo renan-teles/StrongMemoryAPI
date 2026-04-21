@@ -10,6 +10,10 @@ node_modules
 .idea
 *.iml
 
+# Envs
+.env.local.dev
+.env.local.prod
+
 # Logs
 *.log
 
