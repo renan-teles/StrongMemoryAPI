@@ -2,7 +2,7 @@ package com.strongmemoryapi.domain.exception;
 
 import com.strongmemoryapi.domain.exception.local.*;
 import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.utils.responseapi.ResponseApi;
+import com.strongmemoryapi.utils.response.ResponseApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,6 +49,20 @@ public class DomainHandlerException {
     @ExceptionHandler(InvalidCurrentPasswordException.class)
     public ResponseEntity<ApiDataResponse<Void>> handlerInvalidCurrentPasswordException(
             InvalidCurrentPasswordException ex
+    ){
+        return ResponseApi.badRequestResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handlerUnauthorizedExceptionException(
+            UnauthorizedException ex
+    ){
+        return ResponseApi.unauthorizedResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handlerBusinessRuleException(
+            BusinessRuleException ex
     ){
         return ResponseApi.badRequestResponse(ex.getMessage());
     }

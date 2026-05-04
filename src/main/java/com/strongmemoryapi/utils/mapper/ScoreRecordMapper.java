@@ -1,15 +1,15 @@
 package com.strongmemoryapi.utils.mapper;
 
-import com.strongmemoryapi.domain.entity.scorerecord.ScoreRecordEntity;
+import com.strongmemoryapi.domain.model.ScoreRecordModel;
 import com.strongmemoryapi.dto.response.ScoreRecordResponse;
 
 public class ScoreRecordMapper {
 
-    public static ScoreRecordResponse toDTO(ScoreRecordEntity score) {
+    public static ScoreRecordResponse toDTO(ScoreRecordModel model) {
         return new ScoreRecordResponse(
-                score.getId(),
-                score.getScore(),
-                score.getDifficulty().getDifficulty()
+                model.getId(),
+                model.getScore(),
+                model.getDifficultyName()
         );
     }
 

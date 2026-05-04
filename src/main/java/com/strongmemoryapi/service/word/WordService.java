@@ -3,105 +3,156 @@ package com.strongmemoryapi.service.word;
 import com.strongmemoryapi.domain.exception.local.InsufficientWordsException;
 import com.strongmemoryapi.domain.exception.local.ResourceAlreadyExistsException;
 import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
-import com.strongmemoryapi.dto.request.word.WordRegistrationRequest;
-import com.strongmemoryapi.dto.request.word.WordUpdateRequest;
-import com.strongmemoryapi.domain.entity.difficulty.DifficultyEntity;
-import com.strongmemoryapi.domain.entity.word.WordEntity;
-import com.strongmemoryapi.repository.word.WordRepository;
+import com.strongmemoryapi.dto.PaginationDTO;
+import com.strongmemoryapi.dto.request.word.RegisterWordRequest;
+import com.strongmemoryapi.dto.request.word.UpdateWordRequest;
+import com.strongmemoryapi.domain.model.DifficultyModel;
+import com.strongmemoryapi.domain.model.WordModel;
+import com.strongmemoryapi.repository.WordRepository;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
+import com.strongmemoryapi.utils.DatabaseErrorUtils;
+import com.strongmemoryapi.utils.mapper.PageableMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
+//import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WordService {
+
+    private final String ALREADY_EXISTS_MESSAGE = "Palavra já existente.";
 
     @Autowired
     private WordRepository wordRepository;
 
     @Autowired
-    private DifficultyService difficultyService;
-
-    @Autowired
     private WordCacheService cacheService;
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
-    public WordEntity register(WordRegistrationRequest request){
-        if(wordRepository.existsByWord(request.word())){
-            throw new ResourceAlreadyExistsException("Palavra já cadastrada.");
+    @Autowired
+    private DifficultyService difficultyService;
+
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    public WordModel register(RegisterWordRequest request){
+        String wordStr = request.word().toLowerCase();
+        String difficultyName = request.difficulty();
+
+        DifficultyModel difficulty = difficultyService.findByName(difficultyName);
+
+        Optional<WordModel> existing = wordRepository.findByWord(wordStr);
+        if (existing.isPresent()) {
+            WordModel word = existing.get();
+
+            if (word.getDeleted()){
+                if(!word.getDifficulty().getName().equalsIgnoreCase(difficultyName)){
+                    word.setDifficulty(difficulty);
+                }
+                return reactivate(word);
+            }
+
+            throw new ResourceAlreadyExistsException(ALREADY_EXISTS_MESSAGE);
         }
 
-        DifficultyEntity difficulty = difficultyService.findByDifficultyName(request.difficulty());
-
-        WordEntity word = new WordEntity();
-        word.setWord(request.word().toLowerCase());
-        word.setDifficulty(difficulty);
-
-        return wordRepository.save(word);
+        return register(request, difficulty);
     }
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
-    public void update(Long id, WordUpdateRequest request){
-        WordEntity word = wordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Palavra não encontrada."));
-
+    private WordModel register(RegisterWordRequest request,DifficultyModel difficulty){
+        WordModel word = new WordModel();
         word.setWord(request.word().toLowerCase());
+        word.setDifficulty(difficulty);
+        word.setDeleted(false);
+        word.setDeletedAt(null);
+
+        try {
+            return wordRepository.save(word);
+        } catch(DataIntegrityViolationException ex){
+            if(DatabaseErrorUtils.isForeignKeyViolation(ex)){
+                throw new ResourceNotFoundException("Dificuldade não encontrada.");
+            }
+            throw ex;
+        }
+    }
+
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    public void update(Long id, UpdateWordRequest request){
+        WordModel word = findByIdAndDeletedFalse(id);
+        word.setWord(request.word().toLowerCase());
+
+        try {
+            wordRepository.save(word);
+        } catch (DataIntegrityViolationException ex){
+            if(DatabaseErrorUtils.isUniqueConstraintViolation(ex)){
+                throw new ResourceAlreadyExistsException(ALREADY_EXISTS_MESSAGE);
+            }
+            throw ex;
+        }
+    }
+
+    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    public void delete(Long id){
+        WordModel word = findByIdAndDeletedFalse(id);
+        word.setDeleted(true);
+        word.setDeletedAt(Instant.now());
+
         wordRepository.save(word);
     }
 
-    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
-    public void delete(Long id){
-        if(!wordRepository.existsById(id)){
-           throw new ResourceNotFoundException("Palavra não encontrada.");
-        }
-        wordRepository.deleteById(id);
+    public Page<WordModel> findByDifficulty(
+            String difficulty,
+            PaginationDTO pagination
+    ){
+        Pageable pageable = PageableMapper.toPageable(pagination);
+        return wordRepository
+                .findByDifficulty_NameAndDeletedFalse(difficulty, pageable);
     }
 
-    public List<WordEntity> findRandomWords(String difficulty, int quantityWords){
+    public List<WordModel> findRandomWords(String difficultyName, int quantityWords){
+        List<Long> randomIds = findRandomWordIds(difficultyName, quantityWords);
+        return wordRepository.findByIdInAndDeletedFalse(randomIds);
+    }
+
+    public List<Long> findRandomWordIds(String difficultyName, int quantityWords){
         if(quantityWords < 2){
             throw new IllegalArgumentException("Quantidade de palavras inválida para sorteio.");
         }
 
-        DifficultyEntity currentDifficulty = difficultyService.findByDifficultyName(difficulty);
+        List<Long> wordIds = new ArrayList<>(
+             cacheService.findIdsByDifficultyName(difficultyName.toLowerCase())
+        );
 
-        List<Long> wordsIds = new ArrayList<>(cacheService.findIdsByDifficulty(currentDifficulty));
-
-        int totalWords = wordsIds.size();
-        if(quantityWords > totalWords){
+        if(wordIds.isEmpty()){
+            throw new ResourceNotFoundException("Palavras não encontradas para sorteio.");
+        }
+        if(quantityWords > wordIds.size()){
             throw new InsufficientWordsException();
         }
 
-        Collections.shuffle(wordsIds);
-        List<Long> selectedIds = wordsIds.subList(0, quantityWords);
-
-        return wordRepository.findByIdIn(selectedIds);
+        Collections.shuffle(wordIds);
+        return wordIds.subList(0, quantityWords);
     }
 
-    public Page<WordEntity> findByDifficulty(
-            String difficulty,
-            int page,
-            int size,
-            String sortBy
-    ){
-        DifficultyEntity currentDifficulty = difficultyService.findByDifficultyName(difficulty);
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-
-        return wordRepository
-                .findAllByDifficulty(pageable, currentDifficulty);
+    private WordModel reactivate(WordModel word) {
+        word.setDeletedAt(null);
+        word.setDeleted(false);
+        return wordRepository.save(word);
     }
 
-    public void checkAlreadyExistsByWord(String word, String exceptionMessage){
+    public void assertIfAlreadyExistsByWord(String word, String exceptionMessage){
         if(!wordRepository.existsByWord(word)) return;
         throw new ResourceAlreadyExistsException(exceptionMessage);
+    }
+
+    private WordModel findByIdAndDeletedFalse(Long id){
+        return wordRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Palavra não encontrada."));
     }
 
 }

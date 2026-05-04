@@ -28,14 +28,13 @@ public class WordSuggestionSecurityConfig extends AbstractSecurityConfig {
                  // ADMIN
                  .requestMatchers(
                          HttpMethod.GET,
-                         "/api/word-suggestion",
-                         "/api/word-suggestion/period"
-                 ).hasRole("ADMINISTRATOR")
+                         "/api/word-suggestion/**"
+                 ).hasRole("ADMIN")
 
                  .requestMatchers(
                          HttpMethod.DELETE,
                          "/api/word-suggestion/**"
-                 ).hasRole("ADMINISTRATOR")
+                 ).hasRole("ADMIN")
            );
 
         return http.build();
