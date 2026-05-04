@@ -1,15 +1,14 @@
 package com.strongmemoryapi.utils.mapper;
 
-import com.strongmemoryapi.domain.entity.word.WordEntity;
+import com.strongmemoryapi.domain.model.WordModel;
 import com.strongmemoryapi.dto.response.WordResponse;
 
 public class WordMapper {
 
-    public static WordResponse toDTO(WordEntity word){
+    public static WordResponse toDTO(WordModel word){
         return new WordResponse(
-                word.getId(),
-                word.getWord(),
-                word.getDifficulty().getDifficulty()
+               word.getWord(),
+               word.getDifficultyName()
         );
     }
 

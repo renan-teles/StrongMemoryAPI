@@ -1,0 +1,45 @@
+package com.strongmemoryapi.controller;
+
+import com.strongmemoryapi.domain.enums.UserRole;
+import com.strongmemoryapi.dto.request.user.UpdatePasswordRequest;
+import com.strongmemoryapi.dto.request.user.RegisterUserRequest;
+import com.strongmemoryapi.dto.response.ApiDataResponse;
+import com.strongmemoryapi.dto.response.UserResponse;
+import com.strongmemoryapi.service.user.UserService;
+import com.strongmemoryapi.utils.mapper.UserMapper;
+import com.strongmemoryapi.utils.response.ResponseApi;
+import com.strongmemoryapi.security.SecurityUtils;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+/* ENPOINTS TESTADOS */
+@RestController
+@RequestMapping(value = "/api/administrator", produces = "application/json;charset=UTF-8")
+public class AdministratorController {
+
+    private final UserRole ROLE = UserRole.ROLE_ADMIN;
+
+    @Autowired
+    private UserService service;
+
+    @PostMapping
+    public ResponseEntity<ApiDataResponse<UserResponse>> register (
+            @Valid @RequestBody RegisterUserRequest requestBody
+    ){
+        UserResponse registered = UserMapper.toDTO(service.register(ROLE, requestBody));
+        return ResponseApi
+                .createdResponse(registered, "Administrador cadastrado com sucesso.");
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> updatePassword(
+            @Valid @RequestBody UpdatePasswordRequest requestBody
+    ){
+        Long userId = SecurityUtils.getCurrentUserId();
+        service.updatePassword(userId, ROLE, requestBody);
+        return ResponseApi.noContentResponse();
+    }
+
+}

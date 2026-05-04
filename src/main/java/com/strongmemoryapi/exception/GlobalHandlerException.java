@@ -1,14 +1,15 @@
 package com.strongmemoryapi.exception;
 
-import com.strongmemoryapi.exception.local.UnauthorizedException;
 import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.utils.responseapi.ResponseApi;
+import com.strongmemoryapi.utils.response.ResponseApi;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -34,6 +35,20 @@ public class GlobalHandlerException {
         return ResponseApi.badRequestResponse("Parâmetro inválido.");
     }
 
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException ex
+    ) {
+        return ResponseApi.badRequestResponse("Ausência de parâmetros obrigatórios.");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiDataResponse<Void>> handleNoResourceFoundException(
+            NoResourceFoundException ex
+    ) {
+        return ResponseApi.badRequestResponse("Recurso não encontrado.");
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiDataResponse<Void>> handleIllegalArgumentException(
             IllegalArgumentException ex
@@ -46,13 +61,6 @@ public class GlobalHandlerException {
             Exception ex
     ) {
         return ResponseApi.internalErrorResponse();
-    }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiDataResponse<Void>> handlerUnauthorizedExceptionException(
-            UnauthorizedException ex
-    ){
-        return ResponseApi.unauthorizedResponse(ex.getMessage());
     }
 
 }

@@ -4,9 +4,7 @@ import java.time.Instant;
 
 public record WordSuggestionResponse(
    Long id,
-   String suggestedWord,
-   String suggestedDifficulty,
-   Instant suggestedAt,
-   String username,
-   String userEmail
+   String word,
+   String difficulty,
+   Instant suggestedAt
 ) {}

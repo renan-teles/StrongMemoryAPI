@@ -1,18 +1,16 @@
 package com.strongmemoryapi.utils.mapper;
 
-import com.strongmemoryapi.domain.entity.wordsuggestion.WordSuggestionEntity;
+import com.strongmemoryapi.domain.model.WordSuggestionModel;
 import com.strongmemoryapi.dto.response.WordSuggestionResponse;
 
 public class WordSuggestionMapper {
 
-    public static  WordSuggestionResponse toDTO(WordSuggestionEntity suggestion){
+    public static  WordSuggestionResponse toDTO(WordSuggestionModel model){
         return new WordSuggestionResponse(
-                suggestion.getId(),
-                suggestion.getSuggestedWord(),
-                suggestion.getSuggestedDifficulty(),
-                suggestion.getSuggestedAt(),
-                suggestion.getUser().getUsername(),
-                suggestion.getUser().getEmail()
+                model.getId(),
+                model.getWord(),
+                model.getDifficultyName(),
+                model.getSuggestedAt()
         );
     }
 

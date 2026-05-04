@@ -29,23 +29,23 @@ public class WordSecurityConfig extends AbstractSecurityConfig {
             .requestMatchers(
                     HttpMethod.GET,
                     "/api/word/**"
-            ).hasAnyRole("PLAYER", "ADMINISTRATOR")
+            ).hasAnyRole("PLAYER", "ADMIN")
 
             // ADMIN ONLY
             .requestMatchers(
                     HttpMethod.POST,
                     "/api/word"
-            ).hasRole("ADMINISTRATOR")
+            ).hasRole("ADMIN")
 
             .requestMatchers(
-                    HttpMethod.PUT,
+                    HttpMethod.PATCH,
                     "/api/word/**"
-            ).hasRole("ADMINISTRATOR")
+            ).hasRole("ADMIN")
 
             .requestMatchers(
                     HttpMethod.DELETE,
                     "/api/word/**"
-            ).hasRole("ADMINISTRATOR")
+            ).hasRole("ADMIN")
          );
 
         return http.build();

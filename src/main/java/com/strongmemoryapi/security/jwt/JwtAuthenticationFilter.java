@@ -1,7 +1,6 @@
 package com.strongmemoryapi.security.jwt;
 
 import com.strongmemoryapi.service.user.details.CustomUserDetailsService;
-import com.strongmemoryapi.utils.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtils jwtUtil;
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -49,11 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String email = jwtUtil.extractUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-        /*
-        String role = jwtUtil.extractRole(token);
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-        */
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
