@@ -39,13 +39,13 @@ public class WordModel {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "difficulty_name")
     private DifficultyModel difficulty;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "word")
-    private List<WordDrawnModel> drawnList;
+    private List<DrawnWordModel> drawnList;
 
     public String getDifficultyName(){
         return difficulty.getName();

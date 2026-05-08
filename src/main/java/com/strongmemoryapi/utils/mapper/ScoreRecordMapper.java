@@ -1,7 +1,7 @@
 package com.strongmemoryapi.utils.mapper;
 
 import com.strongmemoryapi.domain.model.ScoreRecordModel;
-import com.strongmemoryapi.dto.response.ScoreRecordResponse;
+import com.strongmemoryapi.dto.user.scorerecord.ScoreRecordResponse;
 
 public class ScoreRecordMapper {
 

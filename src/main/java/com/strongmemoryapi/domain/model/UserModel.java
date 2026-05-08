@@ -61,4 +61,8 @@ public class UserModel {
         return role.equals(UserRole.ROLE_PLAYER);
     }
 
+    public boolean isAdmin(){
+        return role.equals(UserRole.ROLE_ADMIN);
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.strongmemoryapi.utils.mapper;
 
 import com.strongmemoryapi.domain.model.DifficultyModel;
-import com.strongmemoryapi.dto.response.DifficultyResponse;
+import com.strongmemoryapi.dto.difficulty.DifficultyResponse;
 
 public class DifficultyMapper {
 

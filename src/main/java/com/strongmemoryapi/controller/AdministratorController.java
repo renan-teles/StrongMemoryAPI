@@ -1,10 +1,10 @@
 package com.strongmemoryapi.controller;
 
 import com.strongmemoryapi.domain.enums.UserRole;
-import com.strongmemoryapi.dto.request.user.UpdatePasswordRequest;
-import com.strongmemoryapi.dto.request.user.RegisterUserRequest;
-import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.dto.response.UserResponse;
+import com.strongmemoryapi.dto.user.UpdatePasswordRequest;
+import com.strongmemoryapi.dto.user.RegisterUserRequest;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
+import com.strongmemoryapi.dto.user.UserResponse;
 import com.strongmemoryapi.service.user.UserService;
 import com.strongmemoryapi.utils.mapper.UserMapper;
 import com.strongmemoryapi.utils.response.ResponseApi;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/* ENPOINTS TESTADOS */
 @RestController
 @RequestMapping(value = "/api/administrator", produces = "application/json;charset=UTF-8")
 public class AdministratorController {

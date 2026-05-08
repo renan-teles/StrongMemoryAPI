@@ -2,10 +2,10 @@ package com.strongmemoryapi.controller;
 
 import com.strongmemoryapi.domain.model.WordModel;
 import com.strongmemoryapi.dto.PaginationDTO;
-import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.dto.request.word.RegisterWordRequest;
-import com.strongmemoryapi.dto.request.word.UpdateWordRequest;
-import com.strongmemoryapi.dto.response.WordResponse;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
+import com.strongmemoryapi.dto.word.RegisterWordRequest;
+import com.strongmemoryapi.dto.word.UpdateWordRequest;
+import com.strongmemoryapi.dto.word.WordResponse;
 import com.strongmemoryapi.service.word.WordService;
 import com.strongmemoryapi.service.word.WordSharedService;
 import com.strongmemoryapi.utils.mapper.WordMapper;
@@ -16,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/word", produces = "application/json;charset=UTF-8")
@@ -56,21 +54,6 @@ public class WordController {
         return ResponseApi.noContentResponse();
     }
 
-    @GetMapping("/random-list")
-    public ResponseEntity<ApiDataResponse<List<WordResponse>>> getRandomList(
-            @RequestParam String difficulty,
-            @RequestParam int quantity
-    ){
-        List<WordResponse> randomWords = service
-                .findRandomWords(difficulty, quantity)
-                .stream()
-                .map(WordMapper::toDTO)
-                .toList();
-
-        return ResponseApi
-                .okResponse(randomWords, "Palavras sorteadas com sucesso.");
-    }
-
     @GetMapping
     public ResponseEntity<ApiDataResponse<Page<WordResponse>>> getByDifficulty(
             @RequestParam(defaultValue = "fácil") String difficulty,
@@ -89,5 +72,22 @@ public class WordController {
         return ResponseApi
                 .okResponse(wordsByDifficulty, "Palavras buscadas com sucesso.");
     }
+
+    /*
+    @GetMapping("/random-list")
+    public ResponseEntity<ApiDataResponse<List<WordResponse>>> getRandomList(
+            @RequestParam String difficulty,
+            @RequestParam int quantity
+    ){
+        List<WordResponse> randomWords = service
+                .findRandomWords(difficulty, quantity)
+                .stream()
+                .map(WordMapper::toDTO)
+                .toList();
+
+        return ResponseApi
+                .okResponse(randomWords, "Palavras sorteadas com sucesso.");
+    }
+    */
 
 }

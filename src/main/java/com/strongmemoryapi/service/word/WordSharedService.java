@@ -1,7 +1,7 @@
 package com.strongmemoryapi.service.word;
 
 import com.strongmemoryapi.domain.model.WordModel;
-import com.strongmemoryapi.dto.request.word.RegisterWordRequest;
+import com.strongmemoryapi.dto.word.RegisterWordRequest;
 import com.strongmemoryapi.service.word.suggestion.WordSuggestionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

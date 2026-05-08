@@ -24,14 +24,17 @@ public class MatchPlayedModel {
 
     @Setter(AccessLevel.NONE)
     @CreationTimestamp
-    @Column(name = "start_playing_in", nullable = false, updatable = false)
-    private Instant startPlayingIn;
-
-    @Column(name = "stopped_playing_in")
-    private Instant stoppedPlayingIn;
+    @Column(name = "start_playing_at", nullable = false, updatable = false)
+    private Instant startPlayingAt;
 
     @Column(nullable = false, name = "infinite_mode")
     private Boolean infiniteMode;
+
+    @Column(name = "stopped_playing_at")
+    private Instant stoppedPlayingAt;
+
+    @Column(name = "total_words")
+    private Integer totalWords;
 
     @Column(name =  "number_correct_answers")
     private Integer numberCorrectAnswers;
@@ -61,12 +64,12 @@ public class MatchPlayedModel {
     @JoinColumn(name = "user_id")
     private UserModel user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "difficulty_name")
     private DifficultyModel difficulty;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matchPlayed", fetch = FetchType.LAZY)
-    private List<WordDrawnModel> wordDrawnList;
+    private List<DrawnWordModel> wordDrawnList;
 
 }

@@ -1,7 +1,7 @@
 package com.strongmemoryapi.utils.mapper;
 
 import com.strongmemoryapi.domain.model.WordSuggestionModel;
-import com.strongmemoryapi.dto.response.WordSuggestionResponse;
+import com.strongmemoryapi.dto.word.suggestions.WordSuggestionResponse;
 
 public class WordSuggestionMapper {
 

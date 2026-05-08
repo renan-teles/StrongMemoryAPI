@@ -1,7 +1,7 @@
 package com.strongmemoryapi.domain.exception;
 
 import com.strongmemoryapi.domain.exception.local.*;
-import com.strongmemoryapi.dto.response.ApiDataResponse;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
 import com.strongmemoryapi.utils.response.ResponseApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

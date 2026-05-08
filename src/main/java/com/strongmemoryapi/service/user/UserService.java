@@ -5,8 +5,8 @@ import com.strongmemoryapi.domain.exception.local.InvalidCurrentPasswordExceptio
 import com.strongmemoryapi.domain.exception.local.ResourceAlreadyExistsException;
 import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.domain.model.UserModel;
-import com.strongmemoryapi.dto.request.user.RegisterUserRequest;
-import com.strongmemoryapi.dto.request.user.UpdatePasswordRequest;
+import com.strongmemoryapi.dto.user.RegisterUserRequest;
+import com.strongmemoryapi.dto.user.UpdatePasswordRequest;
 import com.strongmemoryapi.repository.UserRepository;
 import com.strongmemoryapi.service.user.scorerecord.ScoreRecordService;
 import com.strongmemoryapi.utils.DatabaseErrorUtils;

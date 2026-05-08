@@ -1,6 +1,6 @@
 package com.strongmemoryapi.exception;
 
-import com.strongmemoryapi.dto.response.ApiDataResponse;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
 import com.strongmemoryapi.utils.response.ResponseApi;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
