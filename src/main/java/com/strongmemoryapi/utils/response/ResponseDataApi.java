@@ -1,6 +1,5 @@
 package com.strongmemoryapi.utils.response;
 
-import com.strongmemoryapi.dto.response.ApiDataResponse;
 import org.springframework.http.HttpStatus;
 
 class ResponseDataApi {

@@ -8,10 +8,15 @@ import java.util.Optional;
 
 public interface ScoreRecordRepository extends JpaRepository<ScoreRecordModel, Long> {
 
+    Optional<ScoreRecordModel> findByUser_IdAndDifficulty_NameAndInfiniteMode(
+            Long userId,
+            String difficultyName,
+            boolean infiniteMode
+    );
+
+    /*
     List<ScoreRecordModel> findByUser_Id(Long userId);
 
-    Optional<ScoreRecordModel> findByUser_IdAndDifficulty_Name(Long userId, String difficultyName);
-
     Optional<ScoreRecordModel> findByIdAndUser_Id(Long id, Long userId);
-
+    */
 }

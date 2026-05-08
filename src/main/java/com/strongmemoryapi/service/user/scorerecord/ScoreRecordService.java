@@ -3,7 +3,6 @@ package com.strongmemoryapi.service.user.scorerecord;
 import com.strongmemoryapi.domain.exception.local.BusinessRuleException;
 import com.strongmemoryapi.domain.exception.local.ResourceAlreadyExistsException;
 import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
-import com.strongmemoryapi.dto.request.scorerecord.ScoreRecordRequest;
 import com.strongmemoryapi.domain.model.DifficultyModel;
 import com.strongmemoryapi.domain.model.ScoreRecordModel;
 import com.strongmemoryapi.domain.model.UserModel;
@@ -15,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,17 +43,19 @@ public class ScoreRecordService {
             );
         }
 
-        List<ScoreRecordModel> initialScores = difficulties
-                .stream()
-                .map((difficulty) -> {
-                    ScoreRecordModel score = new ScoreRecordModel();
-                    score.setDifficulty(difficulty);
-                    score.setUser(user);
-                    score.setScore(0);
+        List<ScoreRecordModel> initialScores = new ArrayList<>();
 
-                    return score;
-                })
-                .toList();
+        for(DifficultyModel difficulty : difficulties){
+            for(int i = 0; i <= 1; i++){
+                ScoreRecordModel score = new ScoreRecordModel();
+                score.setDifficulty(difficulty);
+                score.setUser(user);
+                score.setScore(0);
+                score.setInfiniteMode(i == 0);
+
+                initialScores.add(score);
+            }
+        }
 
         try {
             repository.saveAll(initialScores);
@@ -68,14 +70,34 @@ public class ScoreRecordService {
         }
     }
 
-    public List<ScoreRecordModel> findUserScoreRecords(Long userId){
-        return repository.findByUser_Id(userId);
+    public ScoreRecordModel saveScoreRecord(ScoreRecordModel newScore){
+        try {
+            return repository.save(newScore);
+        } catch (DataIntegrityViolationException ex){
+            if(DatabaseErrorUtils.isUniqueConstraintViolation(ex)){
+                throw new ResourceAlreadyExistsException("Pontuação já existente para usuário.");
+            }
+            throw ex;
+        }
     }
 
-    public ScoreRecordModel findUserScoreRecord(Long userId, String difficultyName){
+    public ScoreRecordModel findUserScoreRecord(
+            Long userId,
+            String difficultyName,
+            boolean infiniteMode
+    ){
         return repository
-                .findByUser_IdAndDifficulty_Name(userId, difficultyName.toLowerCase())
+                .findByUser_IdAndDifficulty_NameAndInfiniteMode(
+                        userId,
+                        difficultyName.toLowerCase(),
+                        infiniteMode
+                )
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE));
+    }
+
+    /*
+    public List<ScoreRecordModel> findUserScoreRecords(Long userId){
+        return repository.findByUser_Id(userId);
     }
 
     public ScoreRecordModel updateScoreRecord(
@@ -94,5 +116,6 @@ public class ScoreRecordService {
 
         return repository.save(score);
     }
+    */
 
 }

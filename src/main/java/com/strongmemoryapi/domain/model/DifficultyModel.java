@@ -19,6 +19,9 @@ public class DifficultyModel {
     @Column(unique = true, nullable = false, length = 25, updatable = false)
     private String name;
 
+    @Column(nullable = false, name = "increase_per_hit", updatable = false)
+    private Integer increasePerHit;
+
     @Column(nullable = false, name = "quantity_words", updatable = false)
     private Integer quantityWords;
 

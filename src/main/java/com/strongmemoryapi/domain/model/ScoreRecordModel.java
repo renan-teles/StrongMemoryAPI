@@ -25,6 +25,9 @@ public class ScoreRecordModel {
     @Column(nullable = false)
     private Integer score;
 
+    @Column(nullable = false, name = "infinite_mode", updatable = false)
+    private Boolean infiniteMode;
+
     @Setter(AccessLevel.NONE)
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -46,4 +49,6 @@ public class ScoreRecordModel {
     public String getDifficultyName(){
         return difficulty.getName();
     }
+
 }
+

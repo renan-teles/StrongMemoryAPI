@@ -1,7 +1,7 @@
 package com.strongmemoryapi.controller;
 
-import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.dto.response.DifficultyResponse;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
+import com.strongmemoryapi.dto.difficulty.DifficultyResponse;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
 import com.strongmemoryapi.utils.mapper.DifficultyMapper;
 import com.strongmemoryapi.utils.response.ResponseApi;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/* ENPOINTS TESTADOS */
 @RestController
 @RequestMapping(value = "/api/difficulty", produces = "application/json;charset=UTF-8")
 public class DifficultyController {

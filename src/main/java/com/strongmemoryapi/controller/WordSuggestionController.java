@@ -1,10 +1,10 @@
 package com.strongmemoryapi.controller;
 
-import com.strongmemoryapi.dto.FindByPeriodWordSuggestionDTO;
+import com.strongmemoryapi.dto.word.suggestions.FindByPeriodWordSuggestionDTO;
 import com.strongmemoryapi.dto.PaginationDTO;
-import com.strongmemoryapi.dto.response.ApiDataResponse;
-import com.strongmemoryapi.dto.request.wordsuggestion.RegisterWordSuggestionRequest;
-import com.strongmemoryapi.dto.response.WordSuggestionResponse;
+import com.strongmemoryapi.utils.response.ApiDataResponse;
+import com.strongmemoryapi.dto.word.suggestions.RegisterWordSuggestionRequest;
+import com.strongmemoryapi.dto.word.suggestions.WordSuggestionResponse;
 import com.strongmemoryapi.service.word.suggestion.WordSuggestionService;
 import com.strongmemoryapi.utils.mapper.WordSuggestionMapper;
 import com.strongmemoryapi.utils.response.ResponseApi;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Optional;
 
-/* ENDPOINTS TESTADOS  */
 @RestController
 @RequestMapping(value = "/api/word-suggestion", produces = "application/json;charset=UTF-8")
 public class WordSuggestionController {
