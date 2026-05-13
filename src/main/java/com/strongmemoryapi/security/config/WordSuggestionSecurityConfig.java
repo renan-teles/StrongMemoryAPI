@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WordSuggestionSecurityConfig extends AbstractSecurityConfig {
 
     @Bean
-    @Order(3)
+    @Order(4)
     public SecurityFilterChain wordSuggestionFilterChain(HttpSecurity http) throws Exception {
         commonConfig.apply(http, filter);
 

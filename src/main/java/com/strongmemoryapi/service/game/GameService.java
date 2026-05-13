@@ -1,8 +1,8 @@
 package com.strongmemoryapi.service.game;
 
 import com.strongmemoryapi.domain.model.DifficultyModel;
-import com.strongmemoryapi.domain.model.MatchPlayedModel;
-import com.strongmemoryapi.domain.model.DrawnWordModel;
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
+import com.strongmemoryapi.domain.model.matchhistory.DrawnWordModel;
 import com.strongmemoryapi.dto.game.FinishGameResponse;
 import com.strongmemoryapi.dto.game.StartGameRequest;
 import com.strongmemoryapi.dto.game.GameDataDTO;
@@ -42,13 +42,13 @@ public class GameService {
 
         List<Long> randomWordIds = wordService.findRandomWordIds(
                 difficulty.getName().toLowerCase(),
-                difficulty.getQuantityWords()
+                difficulty.getNumberWords()
         );
 
         MatchPlayedModel match = matchService.register(
                 userId,
                 difficulty,
-                request.infiniteMode()
+                request.mode()
         );
 
         List<DrawnWordDTO> wordDrawnList = drawnWordService
@@ -60,9 +60,8 @@ public class GameService {
         MatchPlayedDTO matchResponse = new MatchPlayedDTO(
                 match.getId(),
                 difficulty.getName(),
-                match.isFinishedByTimeout(),
-                match.isCompletedSequenceWords(),
-                match.getAvgResponseTimeMs()
+                match.getResult(),
+                match.getAverageResponseTimeMs()
         );
 
         return new GameDataDTO(matchResponse, wordDrawnList);
@@ -73,7 +72,7 @@ public class GameService {
         MatchPlayedDTO matchDTO = request.match();
 
         MatchPlayedModel match = matchService
-                .findByIdAndUserIdExcludeGaveUpsAndFinished(
+                .findNotCompletedByIdAndUserId(
                         matchDTO.id(),
                         userId
                 );
@@ -93,12 +92,13 @@ public class GameService {
         );
     }
 
+    @Transactional
     public void gaveUp(Long userId, GameDataDTO request){
         List<DrawnWordDTO> drawnWords = request.drawnWords();
         MatchPlayedDTO matchDTO = request.match();
 
         MatchPlayedModel matchModel = matchService
-                .findByIdAndUserIdExcludeGaveUpsAndFinished(
+                .findNotCompletedByIdAndUserId(
                     matchDTO.id(),
                     userId
                 );
@@ -110,20 +110,19 @@ public class GameService {
         drawnWordService.update(drawnWords, matchModel);
     }
 
-    @Transactional
     public List<DrawnWordModel> findMoreRandomWords(
             Long userId,
             Long matchId,
             Integer startOrderIndex
     ){
         MatchPlayedModel match = matchService
-                .findByIdAndUserIdExcludeGaveUpsAndFinished(matchId, userId);
+                .findNotCompletedByIdAndUserId(matchId, userId);
 
         DifficultyModel difficulty = match.getDifficulty();
 
         List<Long> randomWordIds = wordService.findRandomWordIds(
                 difficulty.getName().toLowerCase(),
-                difficulty.getQuantityWords()
+                difficulty.getNumberWords()
         );
 
         return drawnWordService

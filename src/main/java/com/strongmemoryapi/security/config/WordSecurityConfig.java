@@ -11,19 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WordSecurityConfig extends AbstractSecurityConfig {
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain wordFilterChain(HttpSecurity http) throws Exception {
         commonConfig.apply(http, filter);
 
         http
             .securityMatcher("/api/word/**")
             .authorizeHttpRequests(auth -> auth
-
-            // RANDOM LIST (PLAYER)
-            .requestMatchers(
-                    HttpMethod.GET,
-                    "/api/word/random-list"
-            ).permitAll()
 
             // GET (PLAYER + ADMIN)
             .requestMatchers(

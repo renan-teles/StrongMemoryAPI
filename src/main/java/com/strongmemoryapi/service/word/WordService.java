@@ -7,13 +7,13 @@ import com.strongmemoryapi.dto.PaginationDTO;
 import com.strongmemoryapi.dto.word.RegisterWordRequest;
 import com.strongmemoryapi.dto.word.UpdateWordRequest;
 import com.strongmemoryapi.domain.model.DifficultyModel;
-import com.strongmemoryapi.domain.model.WordModel;
-import com.strongmemoryapi.repository.WordRepository;
+import com.strongmemoryapi.domain.model.word.WordModel;
+import com.strongmemoryapi.repository.word.WordRepository;
 import com.strongmemoryapi.service.difficulty.DifficultyService;
 import com.strongmemoryapi.utils.DatabaseErrorUtils;
 import com.strongmemoryapi.utils.mapper.PageableMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,7 @@ public class WordService {
     @Autowired
     private DifficultyService difficultyService;
 
-    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public WordModel register(RegisterWordRequest request){
         String wordStr = request.word().toLowerCase();
         String difficultyName = request.difficulty();
@@ -80,7 +80,7 @@ public class WordService {
         }
     }
 
-    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public void update(Long id, UpdateWordRequest request){
         WordModel word = findByIdAndDeletedFalse(id);
         word.setWord(request.word().toLowerCase());
@@ -95,7 +95,7 @@ public class WordService {
         }
     }
 
-    //@CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
+    @CacheEvict(value = "wordIdsByDifficulty", allEntries = true)
     public void delete(Long id){
         WordModel word = findByIdAndDeletedFalse(id);
         word.setDeleted(true);
@@ -111,11 +111,6 @@ public class WordService {
         Pageable pageable = PageableMapper.toPageable(pagination);
         return wordRepository
                 .findByDifficulty_NameAndDeletedFalse(difficulty, pageable);
-    }
-
-    public List<WordModel> findRandomWords(String difficultyName, int quantityWords){
-        List<Long> randomIds = findRandomWordIds(difficultyName, quantityWords);
-        return wordRepository.findByIdInAndDeletedFalse(randomIds);
     }
 
     public List<Long> findRandomWordIds(String difficultyName, int quantityWords){

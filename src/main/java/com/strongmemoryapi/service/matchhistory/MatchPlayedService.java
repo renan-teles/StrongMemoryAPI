@@ -1,18 +1,13 @@
 package com.strongmemoryapi.service.matchhistory;
 
-import com.strongmemoryapi.domain.exception.local.BusinessRuleException;
+import com.strongmemoryapi.domain.enums.MatchMode;
+import com.strongmemoryapi.domain.enums.MatchResult;
 import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.domain.model.DifficultyModel;
-import com.strongmemoryapi.domain.model.MatchPlayedModel;
-import com.strongmemoryapi.domain.model.ScoreRecordModel;
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
 import com.strongmemoryapi.domain.model.UserModel;
-import com.strongmemoryapi.dto.matchhistory.FinishMatchDTO;
-import com.strongmemoryapi.dto.matchhistory.MatchPlayedDTO;
-import com.strongmemoryapi.dto.matchhistory.MatchPlayedStatisticsDTO;
-import com.strongmemoryapi.dto.matchhistory.DrawnWordDTO;
-import com.strongmemoryapi.dto.user.scorerecord.UpdateScoreDTO;
-import com.strongmemoryapi.repository.MatchPlayedRepository;
-import com.strongmemoryapi.service.user.scorerecord.ScoreRecordService;
+import com.strongmemoryapi.dto.matchhistory.*;
+import com.strongmemoryapi.repository.matchhistory.MatchPlayedRepository;
 import com.strongmemoryapi.utils.DatabaseErrorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MatchPlayedService {
@@ -30,18 +26,18 @@ public class MatchPlayedService {
     private MatchPlayedRepository repository;
 
     @Autowired
-    private ScoreRecordService scoreService;
+    private MatchStatisticsService statisticsService;
 
     public MatchPlayedModel register(
             Long userId,
             DifficultyModel difficulty,
-            boolean infiniteMode
+            MatchMode mode
     ){
         UserModel user = new UserModel();
         user.setId(userId);
 
         MatchPlayedModel match =
-                createInitialModel(difficulty, user, infiniteMode);
+                createInitialModel(difficulty, user, mode);
 
         try {
             return repository.save(match);
@@ -60,64 +56,33 @@ public class MatchPlayedService {
             MatchPlayedModel matchModel,
             MatchPlayedDTO matchDTO
     ){
-        boolean completedSequenceWords = matchDTO.completedSequenceWords();
-
-        if(matchDTO.finishedByTimeout() == completedSequenceWords){
-            throw new BusinessRuleException(
-                 "Status de finalização da partida inválidos."
-            );
-        }
-
-        long wasShownCount = drawnWords
-                .stream()
-                .filter(DrawnWordDTO::wasShown)
-                .count();
-
-        if(completedSequenceWords && (wasShownCount != drawnWords.size())){
-            throw new BusinessRuleException(
-                 "Status de sequência completa inválido."
-            );
-        }
-
         DifficultyModel difficulty = matchModel.getDifficulty();
 
-        MatchPlayedStatisticsDTO statistics = calculateStatistics(drawnWords);
-        setFinishedStatistics(
-                matchModel,
-                statistics,
-                difficulty
-        );
+        matchModel.setStoppedPlayingAt(Instant.now());
+        matchModel.setAverageResponseTimeMs(matchDTO.averageResponseTimeMs());
 
-        matchModel.setFinishedByTimeout(matchDTO.finishedByTimeout());
-        matchModel.setAvgResponseTimeMs(matchDTO.avgResponseTimeMs());
+        MatchPlayedStatisticsDTO statistics =
+                statisticsService.calculate(matchModel, drawnWords);
 
-        matchModel.setGaveUp(false);
+        setStatistics(matchModel, statistics, difficulty);
 
-        if(matchModel.getInfiniteMode()){
-            matchModel.setCompletedSequenceWords(false);
-        } else {
-            matchModel.setCompletedSequenceWords(matchDTO.completedSequenceWords());
+        matchModel.setDurationMs(statistics.matchDurationMs());
+
+        if(matchModel.isInFiniteMode()){
+            setMatchResult(matchModel, matchDTO, drawnWords);
         }
 
-        matchModel.setStoppedPlayingAt(Instant.now());
-        matchModel = repository.save(matchModel);
+        HighestScoreDTO scoreDTO = checkHasNewHighestScore(matchModel, userId);
 
-        UpdateScoreDTO scoreDTO =
-                updateScore(
-                        userId,
-                        difficulty.getName(),
-                        matchModel.getScoreAchieved(),
-                        matchModel.getInfiniteMode()
-                );
+        MatchPlayedModel finishedMatch = repository.save(matchModel);
 
         return new FinishMatchDTO(
-                scoreDTO.hasNewHighestScore(),
-                scoreDTO.score().getScore(),
-                matchModel
+            scoreDTO.hasNewHighestScore(),
+            scoreDTO.score(),
+            finishedMatch
         );
     }
 
-    @Transactional
     public void gaveUp(
             MatchPlayedDTO matchDTO,
             MatchPlayedModel matchModel,
@@ -125,87 +90,51 @@ public class MatchPlayedService {
     ){
         DifficultyModel difficulty = matchModel.getDifficulty();
 
-        MatchPlayedStatisticsDTO statistics = calculateStatistics(drawnWords);
-        setFinishedStatistics(
-                matchModel,
-                statistics,
-                difficulty
-        );
-
-        matchModel.setAvgResponseTimeMs(matchDTO.avgResponseTimeMs());
-        matchModel.setGaveUp(true);
-        matchModel.setFinishedByTimeout(false);
-        matchModel.setCompletedSequenceWords(false);
         matchModel.setStoppedPlayingAt(Instant.now());
+
+        MatchPlayedStatisticsDTO statistics =
+                statisticsService.calculate(matchModel, drawnWords);
+
+        setStatistics(matchModel, statistics, difficulty);
+
+        matchModel.setDurationMs(statistics.matchDurationMs());
+        matchModel.setAverageResponseTimeMs(matchDTO.averageResponseTimeMs());
+        matchModel.setResult(MatchResult.GAVE_UP);
 
         repository.save(matchModel);
     }
 
-    public MatchPlayedModel findByIdAndUserIdExcludeGaveUpsAndFinished(
-            Long id,
-            Long userId
-    ) {
+    public MatchPlayedModel findNotCompletedByIdAndUserId(Long id, Long userId) {
         return repository
-                .findByIdAndUser_IdAndGaveUpFalseAndStoppedPlayingAtNull(id, userId)
+                .findByIdAndUser_IdAndResultAndStoppedPlayingAtNull(
+                     id, userId, MatchResult.NOT_COMPLETED
+                )
                 .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
     }
 
     private MatchPlayedModel createInitialModel(
             DifficultyModel difficulty,
             UserModel user,
-            boolean infiniteMode
+            MatchMode mode
     ){
         MatchPlayedModel match = new MatchPlayedModel();
         match.setDifficulty(difficulty);
         match.setUser(user);
 
-        match.setInfiniteMode(infiniteMode);
-
-        match.setCompletedSequenceWords(false);
-        match.setGaveUp(false);
-        match.setFinishedByTimeout(false);
-
+        match.setMode(mode);
+        match.setResult(MatchResult.NOT_COMPLETED);
+        match.setAccuracyPercentage(BigDecimal.ZERO);
+        match.setDurationMs(0L);
         match.setNumberErrors(0);
         match.setNumberCorrectAnswers(0);
         match.setTotalWords(0);
         match.setScoreAchieved(0);
-        match.setAccuracy(BigDecimal.ZERO);
-        match.setAvgResponseTimeMs(0);
+        match.setAverageResponseTimeMs(0);
 
         return match;
     }
 
-    private MatchPlayedStatisticsDTO calculateStatistics(
-            List<DrawnWordDTO> drawnWords
-    ){
-        int totalWords = drawnWords.size();
-
-        int numberCorrectAnswers = (int) drawnWords
-                .stream()
-                .filter((w) -> w.isCorrect() && w.wasShown())
-                .count();
-
-        int numberErrors = (int) drawnWords
-                .stream()
-                .filter((w) -> !w.isCorrect() && w.wasShown())
-                .count();
-
-        double accuracy = 0;
-        double accuracyMultiplication = numberCorrectAnswers * 100.00;
-
-        if(accuracyMultiplication > 0){
-            accuracy = accuracyMultiplication / totalWords;
-        }
-
-        return new MatchPlayedStatisticsDTO(
-                totalWords,
-                numberCorrectAnswers,
-                numberErrors,
-                BigDecimal.valueOf(accuracy)
-        );
-    }
-
-    private void setFinishedStatistics(
+    private void setStatistics(
             MatchPlayedModel match,
             MatchPlayedStatisticsDTO statistics,
             DifficultyModel difficulty
@@ -215,29 +144,60 @@ public class MatchPlayedService {
 
         match.setTotalWords(statistics.totalWords());
         match.setNumberErrors(statistics.numberErrors());
-        match.setAccuracy(statistics.accuracy());
+        match.setAccuracyPercentage(statistics.accuracyPercentage());
 
         int increasePerHit = difficulty.getIncreasePerHit();
         int scoreAchieved = increasePerHit * numberCorrectAnswers;
         match.setScoreAchieved(scoreAchieved);
     }
 
-    private UpdateScoreDTO updateScore(
-            Long userId,
-            String difficultyName,
-            Integer scoreAchieved,
-            boolean infiniteMode
+    private void setMatchResult(
+            MatchPlayedModel match,
+            MatchPlayedDTO matchDTO,
+            List<DrawnWordDTO> drawnWords
     ){
-        ScoreRecordModel currentScore = scoreService
-                .findUserScoreRecord(userId, difficultyName, infiniteMode);
+        final MatchResult result = matchDTO.result();
+        final MatchResult completedResult = MatchResult.COMPLETED;
 
-        boolean hasNewHighestScore = scoreAchieved > currentScore.getScore();
-        if(hasNewHighestScore){
-            currentScore.setScore(scoreAchieved);
-            currentScore = scoreService.saveScoreRecord(currentScore);
+        if(!(result.equals(completedResult) || result.equals(MatchResult.TIMEOUT))){
+            throw new IllegalArgumentException(
+                "Resultado inválido para finalização de partida."
+            );
         }
 
-        return new UpdateScoreDTO(hasNewHighestScore, currentScore);
+        long wasShownCount = drawnWords
+                .stream()
+                .filter(DrawnWordDTO::wasShown)
+                .count();
+
+        if(
+             result.equals(completedResult)
+             && (wasShownCount != drawnWords.size())
+        ){
+            throw new IllegalArgumentException(
+                    "Resultado da partida inválido."
+            );
+        }
+
+        match.setResult(result);
+    }
+
+    private HighestScoreDTO checkHasNewHighestScore(MatchPlayedModel match, Long userId){
+        Optional<Integer> maxScoreOpt = repository
+                .findMaxScoreByUser_IdAndModeAnDifficulty_Name(
+                        userId,
+                        match.getMode(),
+                        match.getDifficulty().getName()
+                );
+
+        boolean hasNewHighestScore = true;
+        int scoreAchieved = match.getScoreAchieved();
+
+        if(maxScoreOpt.isPresent()) {
+            hasNewHighestScore = scoreAchieved > maxScoreOpt.get();
+        }
+
+        return new HighestScoreDTO(hasNewHighestScore, scoreAchieved);
     }
 
 }

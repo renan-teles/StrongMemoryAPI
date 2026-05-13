@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class DifficultySecurityConfig extends AbstractSecurityConfig {
 
     @Bean
-    @Order(4)
+    @Order(6)
     public SecurityFilterChain difficultyFilterChain(HttpSecurity http) throws Exception {
         commonConfig.apply(http, filter);
 

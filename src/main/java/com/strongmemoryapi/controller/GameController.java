@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/game")
+@RequestMapping(
+     value = "/api/game",
+     produces = "application/json;charset=UTF-8"
+)
 public class GameController {
 
     @Autowired

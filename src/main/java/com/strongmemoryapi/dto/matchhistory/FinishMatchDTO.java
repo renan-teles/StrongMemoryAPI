@@ -1,6 +1,6 @@
 package com.strongmemoryapi.dto.matchhistory;
 
-import com.strongmemoryapi.domain.model.MatchPlayedModel;
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
 
 public record FinishMatchDTO(
         Boolean hasNewHighestScore,

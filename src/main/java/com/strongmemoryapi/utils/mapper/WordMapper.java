@@ -1,6 +1,6 @@
 package com.strongmemoryapi.utils.mapper;
 
-import com.strongmemoryapi.domain.model.WordModel;
+import com.strongmemoryapi.domain.model.word.WordModel;
 import com.strongmemoryapi.dto.word.WordResponse;
 
 public class WordMapper {

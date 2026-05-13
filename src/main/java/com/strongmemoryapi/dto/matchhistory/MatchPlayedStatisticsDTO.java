@@ -6,5 +6,6 @@ public record MatchPlayedStatisticsDTO(
    int totalWords,
    int numberCorrectAnswers,
    int numberErrors,
-   BigDecimal accuracy
+   BigDecimal accuracyPercentage,
+   long matchDurationMs
 ) {}

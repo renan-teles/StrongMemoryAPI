@@ -1,6 +1,8 @@
 package com.strongmemoryapi.domain.model;
 
 import com.strongmemoryapi.domain.enums.UserRole;
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
+import com.strongmemoryapi.domain.model.word.suggestion.WordSuggestionModel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @NoArgsConstructor
 @Setter
 @Getter
@@ -42,10 +44,6 @@ public class UserModel {
 
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<ScoreRecordModel> myScores;
-
-    @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private List<WordSuggestionModel> myWordSuggestions;
 
     @Setter(AccessLevel.NONE)
@@ -54,15 +52,8 @@ public class UserModel {
 
 
     public String getRoleString(){
+        if(role == null) return "";
         return role.toString();
-    }
-
-    public boolean isPlayer(){
-        return role.equals(UserRole.ROLE_PLAYER);
-    }
-
-    public boolean isAdmin(){
-        return role.equals(UserRole.ROLE_ADMIN);
     }
 
 }

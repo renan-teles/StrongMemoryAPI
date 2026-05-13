@@ -9,4 +9,5 @@ public enum UserRole {
     UserRole(String rolePlayer) {
         role = rolePlayer;
     }
+
 }
