@@ -3,12 +3,11 @@ package com.strongmemoryapi.service.matchhistory;
 import com.strongmemoryapi.domain.exception.local.BusinessRuleException;
 import com.strongmemoryapi.domain.exception.local.ResourceNotFoundException;
 import com.strongmemoryapi.domain.model.DifficultyModel;
-import com.strongmemoryapi.domain.model.MatchPlayedModel;
-import com.strongmemoryapi.domain.model.DrawnWordModel;
-import com.strongmemoryapi.domain.model.WordModel;
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
+import com.strongmemoryapi.domain.model.matchhistory.DrawnWordModel;
+import com.strongmemoryapi.domain.model.word.WordModel;
 import com.strongmemoryapi.dto.matchhistory.DrawnWordDTO;
-import com.strongmemoryapi.repository.DrawnWordRepository;
-import com.strongmemoryapi.repository.WordRepository;
+import com.strongmemoryapi.repository.matchhistory.DrawnWordRepository;
 import com.strongmemoryapi.utils.DatabaseErrorUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -174,7 +173,7 @@ public class DrawnWordService {
         }
 
         DifficultyModel difficulty = match.getDifficulty();
-        if(wordIds.size() != difficulty.getQuantityWords()){
+        if(wordIds.size() != difficulty.getNumberWords()){
             throw new BusinessRuleException(
                  "Quantidade mínima de palavras inválidas para dificuldade: " + difficulty.getName()
             );
@@ -237,7 +236,7 @@ public class DrawnWordService {
             return 0;
         }
 
-        if(!match.getInfiniteMode()){
+        if(match.isInFiniteMode()){
             throw new BusinessRuleException(
                  "Partidas com modo de jogo finito não podem ter novas palavras."
             );

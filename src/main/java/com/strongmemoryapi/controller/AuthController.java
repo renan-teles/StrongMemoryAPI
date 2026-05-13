@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/auth", produces = "application/json;charset=UTF-8")
+@RequestMapping(
+      value = "/api/auth",
+      produces = "application/json;charset=UTF-8"
+)
 public class AuthController {
 
     @Autowired

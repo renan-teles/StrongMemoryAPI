@@ -8,7 +8,7 @@ public class DifficultyMapper {
     public static DifficultyResponse toDTO(DifficultyModel model) {
         return new DifficultyResponse(
                 model.getName(),
-                model.getQuantityWords(),
+                model.getNumberWords(),
                 model.getIncreaseDisplayTimeSeconds(),
                 model.getIncreaseTypingTimeSeconds()
         );

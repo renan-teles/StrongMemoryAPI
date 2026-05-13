@@ -1,7 +1,9 @@
 package com.strongmemoryapi.domain.model;
 
+import com.strongmemoryapi.domain.model.matchhistory.MatchPlayedModel;
+import com.strongmemoryapi.domain.model.word.WordModel;
+import com.strongmemoryapi.domain.model.word.suggestion.WordSuggestionModel;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +24,8 @@ public class DifficultyModel {
     @Column(nullable = false, name = "increase_per_hit", updatable = false)
     private Integer increasePerHit;
 
-    @Column(nullable = false, name = "quantity_words", updatable = false)
-    private Integer quantityWords;
+    @Column(nullable = false, name = "number_words", updatable = false)
+    private Integer numberWords;
 
     @Column(nullable = false, name = "increase_display_time_seconds", updatable = false)
     private Integer increaseDisplayTimeSeconds;
@@ -36,9 +38,6 @@ public class DifficultyModel {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "difficulty", cascade = CascadeType.ALL)
     private List<WordSuggestionModel> wordSuggestions;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "difficulty", cascade = CascadeType.ALL)
-    private List<ScoreRecordModel> allScores;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "difficulty", cascade = CascadeType.ALL)
     private List<MatchPlayedModel> matchesPlayed;

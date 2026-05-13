@@ -11,39 +11,31 @@ import org.springframework.security.web.SecurityFilterChain;
 public class UserSecurityConfig extends AbstractSecurityConfig {
 
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
         commonConfig.apply(http, filter);
 
         http
-            .securityMatcher("/api/player/**", "/api/administrator/**", "/api/auth/**")
+            .securityMatcher("/api/player/**", "/api/administrator/**")
             .authorizeHttpRequests(auth -> auth
 
                  // PUBLIC
                  .requestMatchers(
                        HttpMethod.POST,
                        "/api/player",
-                      "/api/administrator",
-                      "/api/auth"
+                      "/api/administrator"
                  ).permitAll()
 
                  // PLAYER
                  .requestMatchers(
                          HttpMethod.PATCH,
-                         "/api/player/me/password",
-                         "/api/player/me/score/new-score/**"
+                         "/api/player/password"
                  ).hasRole("PLAYER")
-
-                  .requestMatchers(
-                          HttpMethod.GET,
-                         "/api/player/me/score",
-                          "/api/player/me/scores"
-                  ).hasRole("PLAYER")
 
                   // ADMIN
                   .requestMatchers(
                           HttpMethod.PATCH,
-                          "/api/administrator/me/password"
+                          "/api/administrator/password"
                   ).hasRole("ADMIN")
             );
 

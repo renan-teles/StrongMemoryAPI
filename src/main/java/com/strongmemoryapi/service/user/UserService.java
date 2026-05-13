@@ -8,7 +8,6 @@ import com.strongmemoryapi.domain.model.UserModel;
 import com.strongmemoryapi.dto.user.RegisterUserRequest;
 import com.strongmemoryapi.dto.user.UpdatePasswordRequest;
 import com.strongmemoryapi.repository.UserRepository;
-import com.strongmemoryapi.service.user.scorerecord.ScoreRecordService;
 import com.strongmemoryapi.utils.DatabaseErrorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,9 +26,6 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    @Autowired
-    private ScoreRecordService scoreService;
-
     @Transactional
     public UserModel register(UserRole role, RegisterUserRequest request){
         UserModel user = new UserModel();
@@ -39,21 +35,14 @@ public class UserService {
         user.setEmail(request.email());
         user.setPassword(encoder.encode(request.password()));
 
-        UserModel created = null;
-
         try {
-            created = repository.save(user);
+            return repository.save(user);
         } catch (DataIntegrityViolationException ex){
             if(DatabaseErrorUtils.isUniqueConstraintViolation(ex)){
                 throw new ResourceAlreadyExistsException("Usuário já existente.");
             }
             throw ex;
         }
-
-        if(created.isPlayer()){
-            scoreService.createInitialUserScores(created);
-        }
-        return created;
     }
 
     public void updatePassword(Long id, UserRole role, UpdatePasswordRequest request){

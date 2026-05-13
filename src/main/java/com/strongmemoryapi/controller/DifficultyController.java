@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/difficulty", produces = "application/json;charset=UTF-8")
+@RequestMapping(
+      value = "/api/difficulty",
+      produces = "application/json;charset=UTF-8"
+)
 public class DifficultyController {
 
     @Autowired

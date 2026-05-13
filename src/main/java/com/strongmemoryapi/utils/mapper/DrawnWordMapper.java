@@ -1,6 +1,6 @@
 package com.strongmemoryapi.utils.mapper;
 
-import com.strongmemoryapi.domain.model.DrawnWordModel;
+import com.strongmemoryapi.domain.model.matchhistory.DrawnWordModel;
 import com.strongmemoryapi.dto.matchhistory.DrawnWordDTO;
 import com.strongmemoryapi.dto.word.WordDTO;
 
