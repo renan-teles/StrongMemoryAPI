@@ -102,11 +102,11 @@ O projeto segue uma arquitetura em camadas bem definida:
 ### Princípios aplicados:
 
 * Separação de responsabilidades
-<!-- * Clean Code -->
 * Organização modular
 * Facilidade de manutenção e escalabilidade
+<!-- * Clean Code -->
 
----
+<br/>
 
 ## 🔐 Segurança
 
@@ -175,11 +175,7 @@ CORS_ALLOWED_ORIGINS=
 |----------|--------------| ------------------------ |
 | POST     | /api/auth    | Autenticação de usuários |
 
-### Query Params
-
-| Parâmetro   | Tipo | Obrigatório   | Valores Permitidos        |
-|-------------|------|---------------|---------------------------|
-| role        | Enum | Sim           | ROLE_PLAYER, ROLE_ADMIN   |
+<br/>
 
 ## 🎯 Dificuldades de Jogo
 
@@ -188,11 +184,7 @@ CORS_ALLOWED_ORIGINS=
 | GET      | /api/difficulty/all | Lista todas as dificuldades |
 | GET      | /api/difficulty     | Busca dificuldade por nome  |
 
-### Query Params
-
-| Parâmetro   | Tipo   | Obrigatório   |
-|-------------| ------ |---------------|
-| name        | string | Sim           |
+<br/>
 
 ## 🎮 Controle de Jogo
 
@@ -203,17 +195,7 @@ CORS_ALLOWED_ORIGINS=
 | POST     | /api/game/finish                      | Finaliza uma partida             |
 | POST     | /api/game/more-random-words/{matchId} | Busca mais palavras aleatórias   |
 
-### Path Params
-
-| Parâmetro   | Tipo   | Descrição     |
-|-------------| ------ | ------------- |
-| matchId     | number | ID da partida |
-
-### Query Params
-
-| Parâmetro       | Tipo   | Obrigatório   |
-|-----------------| ------ |---------------|
-| startOrderIndex | number | Sim           |
+<br/>
 
 ## 📝 Palavras
 
@@ -224,22 +206,7 @@ CORS_ALLOWED_ORIGINS=
 | DELETE   | /api/word/{wordId} | Remove uma palavra       |
 | GET      | /api/word          | Lista palavras paginadas |
 
-### Path Params
-
-| Parâmetro   | Tipo   | Descrição        |
-|-------------| ------ | ---------------- |
-| wordId      | number | ID da palavra    |
-
-### Query Params
-
-| Parâmetro        | Tipo    | Obrigatório   | Valores Permitidos |
-| ---------------- | ------- |---------------| ------------------ |
-| suggestionOrigin | boolean | Não           | true, false        |
-| difficulty       | string  | Não           | —                  |
-| page             | int     | Sim           | —                  |
-| size             | int     | Sim           | —                  |
-| sortBy           | string  | Sim           | —                  |
-| direction        | Enum    | Não           | ASC, DESC          |
+<br/>
 
 ## 💡 Sugestões de Palavras
 
@@ -250,23 +217,7 @@ CORS_ALLOWED_ORIGINS=
 | DELETE   | /api/word-suggestion/{suggestionId} | Remove uma sugestão         |
 | POST     | /api/word-suggestion                | Cria uma sugestão           |
 
-### Path Params
-
-| Parâmetro     | Tipo   | Descrição          |
-|---------------| ------ | ------------------ |
-| suggestionId  | number | ID da sugestão     |
-
-### Query Params
-
-| Parâmetro   | Tipo        | Obrigatório | Valores Permitidos |
-|-------------| ----------- |-------------| ------------------ |
-| difficulty  | string      | Não         | —                  |
-| page        | int         | Sim         | —                  |
-| size        | int         | Sim         | —                  |
-| sortBy      | string      | Sim         | —                  |
-| startDate   | string/date | Sim         | —                  |
-| endDate     | string/date | Sim         | —                  |
-| direction   | Enum        | Não         | ASC, DESC          |
+<br/>
 
 ## 🛡️ Administrador
 
@@ -275,12 +226,16 @@ CORS_ALLOWED_ORIGINS=
 | POST     | /api/admin          | Cadastro de administrador         |
 | PATCH    | /api/admin/password | Alteração de senha                |
 
+<br/>
+
 ## 👤 Jogador
 
 | Método   | Rota                   | Descrição                    |
 |----------|------------------------|------------------------------|
 | POST     | /api/player            | Cadastro de jogador          |
 | PATCH    | /api/player/password   | Alteração de senha           |
+
+<br/>
 
 ## 📊 Dashboard de Histórico de Partidas
 
@@ -297,12 +252,6 @@ CORS_ALLOWED_ORIGINS=
 | GET      | /api/dashboard/match-history/game/modes                | Estatísticas por modo de jogo                                  |
 | GET      | /api/dashboard/match-history/game/highest-scores       | Maiores pontuações                                             |
 | GET      | /api/dashboard/match-history/engagement                | Dados de engajamento ao longo de um período de dias            |
-
-### Query Params
-
-| Parâmetro   | Tipo   | Obrigatório   |
-|-------------| ------ |---------------|
-| days        | number | Não           |
 
 <br/>
 
