@@ -2,7 +2,7 @@
 
 API REST desenvolvida com Java e Spring Boot para suporte à aplicação **Strong Memory (SM)**, uma plataforma web gamificada voltada para o treinamento da memória muscular e cognitiva.
 
-O sistema fornece toda a infraestrutura backend necessária para execução do mini-game, autenticação de usuários, gerenciamento de palavras, controle de pontuação e administração da plataforma.
+O sistema fornece toda a infraestrutura backend necessária para execução do mini-game, acompanhamento de desempenho, autenticação de usuários, gerenciamento de palavras e administração da plataforma.
 
 <br/>
 
@@ -17,7 +17,7 @@ A proposta central é estimular:
 * Precisão
 * Agilidade cognitiva
 
-A API foi projetada para ser **escalável, segura e performática**, permitindo futuras expansões como análise de desempenho e personalização da experiência do usuário.
+A API foi projetada para ser **escalável, segura e performática**, permitindo futuras expansões como análise profunda de desempenho e personalização da experiência do usuário.
 
 <br/>
 
@@ -32,11 +32,21 @@ A API foi projetada para ser **escalável, segura e performática**, permitindo 
 * Exibição de pontuação ao final da partida
 * Reinício rápido do jogo
 
-### 📊 Sistema de Pontuação
+### 📊 Histórico e Dados para Dashboards
 
-* Registro da maior pontuação por dificuldade
-* Consulta de pontuação por usuário
-* Atualização de pontuação após partidas
+* Registro do histórico completo de partidas
+* Consulta de partidas por usuário
+* Estatísticas de acertos, erros e precisão
+* Histórico de pontuação por período
+* Quantidade total de partidas jogadas
+* Tempo médio de partida
+* Desempenho por dificuldade
+* Evolução de desempenho do jogador
+* Dados para gráficos de desempenho e progresso
+* Registro de sequência de palavras sorteadas
+* Estatísticas de desistências e partidas concluídas
+* Ranking de melhores partidas
+* Filtros por data, dificuldade e modo de jogo
 
 ### 👤 Gestão de Usuários
 
@@ -80,22 +90,23 @@ A API foi projetada para ser **escalável, segura e performática**, permitindo 
 O projeto segue uma arquitetura em camadas bem definida:
 
 * **Controller** → Entrada da API (requisições HTTP)
-* **Service** → Regras de negócio
-* **Repository** → Acesso ao banco de dados
+* **Domain** → Domínio da aplicação e do négocio
 * **DTO** → Transferência de dados entre camadas
+* **Exception** → Tratamento de erros e exceções
+* **Repository** → Acesso ao banco de dados
+* **Security** → Segurança e proteção da aplicação
+* **Service** → Regras de negócio
 
 <br/>
 
-<!--
 ### Princípios aplicados:
 
 * Separação de responsabilidades
-* Clean Code
+<!-- * Clean Code -->
 * Organização modular
 * Facilidade de manutenção e escalabilidade
 
 ---
--->
 
 ## 🔐 Segurança
 
@@ -158,55 +169,140 @@ CORS_ALLOWED_ORIGINS=
 
 ## 📚 Principais Endpoints
 
-### 🔑 Autenticação
+## 🔑 Autenticação
 
-| Método | Rota                    | Descrição                     |
-| ------ | ----------------------- | ----------------------------- |
-| POST   | /api/player/auth        | Autenticação do jogador       |
-| POST   | /api/administrator/auth | Autenticação do administrador |
+| Método   | Rota         | Descrição                |
+|----------|--------------| ------------------------ |
+| POST     | /api/auth    | Autenticação de usuários |
 
-### 👤 Usuários
+### Query Params
 
-| Método | Rota                           | Descrição                                |
-| ------ | ------------------------------ |------------------------------------------|
-| POST   | /api/player                    | Cadastro de jogador                      |
-| POST   | /api/administrator             | Cadastro de administrador                |
-| PUT    | /api/player/me/password        | Atualizar senha do jogador (PLAYER)      |
-| PUT    | /api/administrator/me/password | Atualizar senha do administrador (ADMIN) |
+| Parâmetro   | Tipo | Obrigatório   | Valores Permitidos        |
+|-------------|------|---------------|---------------------------|
+| role        | Enum | Sim           | ROLE_PLAYER, ROLE_ADMIN   |
 
-### 🎮 Mini-Game / Palavras
+## 🎯 Dificuldades de Jogo
 
-| Método | Rota                  | Descrição                               |
-| ------ | --------------------- |-----------------------------------------|
-| GET    | /api/word/random-list | Lista aleatória de palavras para o jogo |
-| GET    | /api/word             | Listagem paginada (PLAYER E ADMIN)      |
-| POST   | /api/word             | Cadastro de palavra (ADMIN)             |
-| PUT    | /api/word/{id}        | Atualização de palavra (ADMIN)          |
-| DELETE | /api/word/{id}        | Remoção de palavra (ADMIN)              |
+| Método   | Rota                | Descrição                   |
+|----------| ------------------- | --------------------------- |
+| GET      | /api/difficulty/all | Lista todas as dificuldades |
+| GET      | /api/difficulty     | Busca dificuldade por nome  |
 
-### 📊 Pontuação
+### Query Params
 
-| Método | Rota                               | Descrição                               |
-| ------ |------------------------------------|-----------------------------------------|
-| GET    | /api/player/me/scores              | Todas as pontuações do usuário (PLAYER) |
-| GET    | /api/player/me/score               | Pontuação por dificuldade (PLAYER)      |
-| PUT    | /api/player/me/new-score/{scoreId} | Atualizar pontuação (PLAYER)            |
+| Parâmetro   | Tipo   | Obrigatório   |
+|-------------| ------ |---------------|
+| name        | string | Sim           |
 
-### 🧠 Dificuldades
+## 🎮 Controle de Jogo
 
-| Método | Rota                 | Descrição           |
-| ------ | -------------------- |---------------------|
-| GET    | /api/difficulty      | Listar dificuldades |
-| GET    | /api/difficulty/{id} | Buscar por ID       |
+| Método   | Rota                                  | Descrição                        |
+|----------| ------------------------------------- | -------------------------------- |
+| POST     | /api/game/start                       | Inicia uma partida               |
+| POST     | /api/game/gave-up                     | Finaliza partida por desistência |
+| POST     | /api/game/finish                      | Finaliza uma partida             |
+| POST     | /api/game/more-random-words/{matchId} | Busca mais palavras aleatórias   |
 
-### 💡 Sugestões de Palavras
+### Path Params
 
-| Método | Rota                        | Descrição                             |
-| ------ | --------------------------- | ------------------------------------- |
-| POST   | /api/word-suggestion        | Criar sugestão (PLAYER)               |
-| GET    | /api/word-suggestion        | Listar sugestões (ADMIN)              |
-| GET    | /api/word-suggestion/period | Filtrar sugestões por período (ADMIN) |
-| DELETE | /api/word-suggestion/{id}   | Remover sugestão (ADMIN)              |
+| Parâmetro   | Tipo   | Descrição     |
+|-------------| ------ | ------------- |
+| matchId     | number | ID da partida |
+
+### Query Params
+
+| Parâmetro       | Tipo   | Obrigatório   |
+|-----------------| ------ |---------------|
+| startOrderIndex | number | Sim           |
+
+## 📝 Palavras
+
+| Método   | Rota               | Descrição                |
+|----------| ------------------ | ------------------------ |
+| POST     | /api/word          | Cadastra uma palavra     |
+| PATCH    | /api/word/{wordId} | Atualiza uma palavra     |
+| DELETE   | /api/word/{wordId} | Remove uma palavra       |
+| GET      | /api/word          | Lista palavras paginadas |
+
+### Path Params
+
+| Parâmetro   | Tipo   | Descrição        |
+|-------------| ------ | ---------------- |
+| wordId      | number | ID da palavra    |
+
+### Query Params
+
+| Parâmetro        | Tipo    | Obrigatório   | Valores Permitidos |
+| ---------------- | ------- |---------------| ------------------ |
+| suggestionOrigin | boolean | Não           | true, false        |
+| difficulty       | string  | Não           | —                  |
+| page             | int     | Sim           | —                  |
+| size             | int     | Sim           | —                  |
+| sortBy           | string  | Sim           | —                  |
+| direction        | Enum    | Não           | ASC, DESC          |
+
+## 💡 Sugestões de Palavras
+
+| Método   | Rota                                | Descrição                   |
+|----------| ----------------------------------- | --------------------------- |
+| GET      | /api/word-suggestion                | Lista sugestões de palavras |
+| GET      | /api/word-suggestion/period         | Lista sugestões por período |
+| DELETE   | /api/word-suggestion/{suggestionId} | Remove uma sugestão         |
+| POST     | /api/word-suggestion                | Cria uma sugestão           |
+
+### Path Params
+
+| Parâmetro     | Tipo   | Descrição          |
+|---------------| ------ | ------------------ |
+| suggestionId  | number | ID da sugestão     |
+
+### Query Params
+
+| Parâmetro   | Tipo        | Obrigatório | Valores Permitidos |
+|-------------| ----------- |-------------| ------------------ |
+| difficulty  | string      | Não         | —                  |
+| page        | int         | Sim         | —                  |
+| size        | int         | Sim         | —                  |
+| sortBy      | string      | Sim         | —                  |
+| startDate   | string/date | Sim         | —                  |
+| endDate     | string/date | Sim         | —                  |
+| direction   | Enum        | Não         | ASC, DESC          |
+
+## 🛡️ Administrador
+
+| Método   | Rota                | Descrição                         |
+|----------| ------------------- | --------------------------------- |
+| POST     | /api/admin          | Cadastro de administrador         |
+| PATCH    | /api/admin/password | Alteração de senha                |
+
+## 👤 Jogador
+
+| Método   | Rota                   | Descrição                    |
+|----------|------------------------|------------------------------|
+| POST     | /api/player            | Cadastro de jogador          |
+| PATCH    | /api/player/password   | Alteração de senha           |
+
+## 📊 Dashboard de Histórico de Partidas
+
+| Método   | Rota                                                   | Descrição                                                      |
+|----------| ------------------------------------------------------ |----------------------------------------------------------------|
+| GET      | /api/dashboard/match-history/overview                  | Visão geral do histórico                                       |
+| GET      | /api/dashboard/match-history/performance/accuracy      | Desempenho de precisão ao longo de um período de dias          |
+| GET      | /api/dashboard/match-history/performance/scores        | Desempenho de pontuação ao longo de um período de dias         |
+| GET      | /api/dashboard/match-history/performance/response-time | Desempenho de tempo de resposta ao longo de um período de dias |
+| GET      | /api/dashboard/match-history/accurary/summary          | Resumo geral de precisão                                       |
+| GET      | /api/dashboard/match-history/accurary/by-difficulty    | Precisão por dificuldade                                       |
+| GET      | /api/dashboard/match-history/matches/results           | Distribuição dos resultados                                    |
+| GET      | /api/dashboard/match-history/matches/duration          | Estatísticas de duração ao longo de um período de dias         |
+| GET      | /api/dashboard/match-history/game/modes                | Estatísticas por modo de jogo                                  |
+| GET      | /api/dashboard/match-history/game/highest-scores       | Maiores pontuações                                             |
+| GET      | /api/dashboard/match-history/engagement                | Dados de engajamento ao longo de um período de dias            |
+
+### Query Params
+
+| Parâmetro   | Tipo   | Obrigatório   |
+|-------------| ------ |---------------|
+| days        | number | Não           |
 
 <br/>
 
