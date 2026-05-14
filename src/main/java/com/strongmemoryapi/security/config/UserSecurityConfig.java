@@ -16,14 +16,14 @@ public class UserSecurityConfig extends AbstractSecurityConfig {
         commonConfig.apply(http, filter);
 
         http
-            .securityMatcher("/api/player/**", "/api/administrator/**")
+            .securityMatcher("/api/player/**", "/api/admin/**")
             .authorizeHttpRequests(auth -> auth
 
                  // PUBLIC
                  .requestMatchers(
                        HttpMethod.POST,
                        "/api/player",
-                      "/api/administrator"
+                      "/api/admin"
                  ).permitAll()
 
                  // PLAYER
@@ -35,7 +35,7 @@ public class UserSecurityConfig extends AbstractSecurityConfig {
                   // ADMIN
                   .requestMatchers(
                           HttpMethod.PATCH,
-                          "/api/administrator/password"
+                          "/api/admin/password"
                   ).hasRole("ADMIN")
             );
 

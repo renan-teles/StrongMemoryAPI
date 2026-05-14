@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY target/StrongMemoryAPI-3.1.0.jar app.jar
+COPY target/StrongMemoryAPI-3.1.1.jar app.jar
 
 EXPOSE 8080
 

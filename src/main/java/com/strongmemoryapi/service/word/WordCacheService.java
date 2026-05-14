@@ -15,7 +15,6 @@ public class WordCacheService {
 
     @Cacheable(value = "wordIdsByDifficulty", key = "#difficulty")
     public List<Long> findIdsByDifficultyName(String difficulty) {
-        System.out.println("ATENÇÃO: INDO BUSCAR IDS DAS PALAVRAS");
         return repository.findIdsByDifficulty_NameAndDeletedFalse(difficulty);
     }
 
